@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="MiniArm">
+  <material name="aluminum">
+    <color rgba="0.5 0.5 0.5 1"/>
+  </material>
+   <link name="base">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <!-- <mesh filename="/home/daros/Repositories/IsaacLab/DHKimTests/RobotTests/MiniArm/mesh/BaseLink.stl" scale="0.01 0.01 0.01"/> -->
+        <!-- <mesh filename="package://MiniArm/mesh/BaseLink.stl" scale="0.01 0.01 0.01"/> -->
+        <!-- <mesh filename="package://MiniArm/mesh/BaseLink.stl" scale="0.01 0.01 0.01"/> -->
+        <!-- <mesh filename="/home/daros/Repositories/IsaacLab/DHKimTests/MiniArm/mesh_obj/BaseLink.obj" scale="0.01 0.01 0.01"/> -->
+        <!-- <mesh filename="package://anymal_d_simple_description/meshes/base.dae" scale="1.0 1.0 1.0"/> -->
+        <!-- <mesh filename="/home/daros/Repositories/IsaacLab/DHKimTests/RobotTests/MiniArm/mesh_dae/ColumnLink.dae" scale="10 10 10"/> -->
+        <!-- <mesh filename="mesh_dae/ColumnLink.dae" scale="10 10 10"/> -->
+        <mesh filename="mesh/BaseLink.stl" scale="10 10 10"/>
+      </geometry>
+    </visual>
+  </link>
+</robot>
+

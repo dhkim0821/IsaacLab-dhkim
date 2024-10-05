@@ -1,0 +1,709 @@
+<?xml version="1.0" ?>
+<robot name="prestoe">
+
+    <!-- <link name="world"/>
+    <joint name="fixed" type="fixed">
+        <parent link="world"/>
+        <child link="torso_link"/>
+    </joint> -->
+
+
+<!--!!!!!!!!!!!! Torso !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+   
+    <link name="torso_link">
+        <inertial>
+            <mass value="7.3955327"/>
+            <inertia ixx="314898.04974e-6" ixy="-23.52183e-6" ixz="-983.13041e-6" iyy="292494.07567e-6" iyz="824.26242e-6" izz="47419.11099e-6"/>
+            <origin rpy="0 0 0" xyz="0.02827e-3 -0.53546e-3 170.93286e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/torso_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/torso_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+ <joint name="torsoyaw" type="revolute">
+        <parent link="torso_link"/>
+        <child link="pelvis"/>
+        <axis xyz="0 0 1"/>
+        <origin rpy="0 0 0" xyz="0.0 0.0 -44.5e-3"/>
+        <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="20"/>
+    </joint>
+
+    <link name="pelvis">
+        <inertial>
+            <mass value="4.05352722"/>
+            <inertia ixx="16129.06382e-6" ixy="0.02459e-6" ixz="-11.24282e-6" iyy="8349.24216e-6" iyz="0.16863e-6" izz="13083.52644e-6"/>
+            <origin xyz="0.1893e-3 -0.00259e-3 -24.14927e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/pelvis_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/pelvis_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!--!!!!!!!!!!!! Right Leg !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+    <joint name="R_hipyaw" type="revolute">
+        <parent link="pelvis"/>
+        <child link="R_hipyaw_link"/>
+        <axis xyz="0 0 1"/>
+        <origin rpy="-0.2618  0  0" xyz="0 -54.71371e-3 -48.37244e-3"/>
+        <!--includes -15 degree tilt, and convert mm to m-->
+        <limit lower="-1.57" upper="1.57" effort="0.0" velocity="20.0"/>
+    </joint>
+    <link name="R_hipyaw_link">
+        <inertial>
+            <mass value="0.81333271"/>
+            <inertia ixx="1468.70277e-6" ixy="2.09444e-6" ixz="-808.6506e-6" iyy="1952.95398e-6" iyz="0.83174e-6" izz="1403.2719e-6"/>
+            <origin rpy="0 0 0" xyz="-60.23929e-3 0.06825e-3 -73.37881e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/hip_yaw_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/hip_yaw_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="R_hiproll" type="revolute">
+        <parent link="R_hipyaw_link"/>
+        <child link="R_hiproll_link"/>
+        <axis xyz="1 0 0"/>
+        <origin rpy="0.2618 0.3491 0" xyz="-63.99211e-3 0 -95.68919e-3"/>
+        <!--another 15 degree tilt to undo the first one and 20 degree tilt-->
+        <limit lower="-1.57" upper="1.57" effort="0.0" velocity="20.0"/>
+    </joint>
+    <link name="R_hiproll_link">
+        <inertial>
+            <mass value="1.14932568"/>
+            <inertia ixx="920.07414e-6" ixy="-23.66697e-6" ixz="15.05929e-6" iyy="1586.13101e-6" iyz="2.15892e-6" izz="1226.34131e-6"/>
+            <origin rpy="0 0 0" xyz="66.03824e-3 15.28026e-3 0.35756e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_hip_roll_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_hip_roll_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="R_hippitch" type="revolute">
+        <parent link="R_hiproll_link"/>
+        <child link="R_hippitch_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 -0.3491 0" xyz="74e-3 -15.7e-3 0"/>
+        <!--another -20 degree tilt to undo the previous one-->
+        <limit lower="-1.57" upper="1.57" effort="100.0" velocity="20.0"/>
+    </joint>
+    <link name="R_hippitch_link">
+        <inertial>
+            <mass value="4.3699915"/>
+            <inertia ixx="298924.68663e-6" ixy="-352.44425e-6" ixz="7197.82909e-6" iyy="300685.59195e-6" iyz="13956.63711e-6" izz="10177.56262e-6"/>
+            <origin rpy="0 0 0" xyz="8.85609e-3 12.34699e-3 -236.4855e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_thigh_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_thigh_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    <joint name="R_knee" type="revolute">
+        <parent link="R_hippitch_link"/>
+        <child link="R_shank_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0 0" xyz="0.0 15.2e-3 -348e-3"/>
+        <limit upper="2.61799" lower="0.0" effort="0.0" velocity="20.0"/>
+    </joint>
+    <link name="R_shank_link">
+        <inertial>
+            <mass value="1.53872774"/>
+            <inertia ixx="94818.95217e-6" ixy="0.73746e-6" ixz="-1571.54542e-6" iyy="94726.4192e-6" iyz="40.20347e-6" izz="2088.92694e-6"/>
+            <origin rpy="0 0 0" xyz="-0.32914e-3 0.04704e-3 -219.68202e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/shank_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/shank_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    <joint name="R_anklepitch" type="revolute">
+        <parent link="R_shank_link"/>
+        <child link="R_ankle_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 -0.523599 0" xyz="0.0 0.0 -0.355"/>
+        <!--shift downwards, rotate by -30 deg-->
+        <limit lower="-1.57" upper="1.57" effort="0.0" velocity="20.0"/>
+    </joint>
+    <link name="R_ankle_link">
+        <inertial>
+            <mass value="0.20111053"/>
+            <inertia ixx="48.83414e-6" ixy="0.00143e-6" ixz="-0.0021e-6" iyy="45.95624e-6" iyz="0.00153e-6" izz="74.52458e-6"/>
+            <origin rpy="0 0 0" xyz="11.07071e-3 0.00053e-3 -0.00076e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/ankle_pitch_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/ankle_pitch_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    <joint name="R_ankleroll" type="revolute">
+        <parent link="R_ankle_link"/>
+        <child link="R_foot_link"/>
+        <axis xyz="1 0 0"/>
+        <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+        <limit lower="-0.785" upper="0.785" effort="0.0" velocity="20.0"/>
+    </joint>
+    <link name="R_foot_link">
+        <inertial>
+            <mass value="0.67696856"/>
+            <inertia ixx="2711.33678e-6" ixy="-0.10761e-6" ixz="1805.42888e-6" iyy="4882.55547e-6" iyz="-0.08071e-6" izz="2592.25732e-6"/>
+            <origin rpy="0 0 0" xyz="22.09392e-3 -0.00337e-3 -50.15365e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/foot_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/foot_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    <joint name="R_toepitch" type="revolute">
+        <parent link="R_foot_link"/>
+        <child link="R_toe_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0.523599 0" xyz="84.97837e-3 0.0 -85.43851e-3"/>
+        <limit lower="-0.5236" upper="0.5236" effort="0.0" velocity="20.0"/>
+    </joint>
+    <link name="R_toe_link">
+        <inertial>
+            <mass value="0.25395867"/>
+            <inertia ixx="422.66848e-6" ixy="0.30058e-6" ixz="201.67782e-6" iyy="648.32269e-6" iyz="0.69143e-6" izz="657.93967e-6"/>
+            <origin rpy="0 0 0" xyz="27.48999e-3 0.10489e-3 -26.31463e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/toe_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/toe_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+
+
+
+
+
+    <!--!!!!!!!!!!!! Left Leg !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+    <joint name="L_hipyaw" type="revolute">
+        <parent link="pelvis"/>
+        <child link="L_hipyaw_link"/>
+        <axis xyz="0 0 1"/>
+         <origin rpy="0.2618  0  0" xyz="0 54.71371e-3 -48.37244e-3"/>
+        <!--includes 15 degree tilt, and convert mm to m-->
+        <limit effort="100" lower="-1.570796" upper="1.570796" velocity="20"/>
+    </joint>
+    <link name="L_hipyaw_link">
+        <inertial>
+            <mass value="0.81333271"/>
+            <inertia ixx="1468.70277e-6" ixy="2.09444e-6" ixz="-808.6506e-6" iyy="1952.95398e-6" iyz="0.83174e-6" izz="1403.2719e-6"/>
+            <origin rpy="0 0 0" xyz="-60.23929e-3 0.06825e-3 -73.37881e-3"/>
+            <!-- Since this is left leg, y coordinate is positive -->
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/hip_yaw_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/hip_yaw_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="L_hiproll" type="revolute">
+        <parent link="L_hipyaw_link"/>
+        <child link="L_hiproll_link"/>
+        <axis xyz="1 0 0"/>
+        <origin rpy="-0.2618 0.3491 0" xyz="-63.99211e-3 0 -95.68919e-3"/>
+        <!--another -15 degree tilt to undo the first one and 20 degree tilt-->
+        <limit effort="100" lower="-1.570796" upper="1.570796" velocity="20"/>
+    </joint>
+    <link name="L_hiproll_link">
+        <inertial>
+            <mass value="1.14932588"/>
+            <inertia ixx="920.08555e-6" ixy="23.66599e-6" ixz="13.88681e-6" iyy="1586.14307e-6" iyz="-2.43377e-6" izz="1226.34169e-6"/>
+            <origin rpy="0 0 0" xyz="66.03823e-3 -15.28028e-3 0.34236e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_hip_roll_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_hip_roll_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="L_hippitch" type="revolute">
+        <parent link="L_hiproll_link"/>
+        <child link="L_hippitch_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 -0.3491 0" xyz="74e-3 15.7e-3 0"/>
+        <!--another -20 degree tilt to undo the previous one-->
+        <limit effort="100" lower="-1.570796" upper="1.570796" velocity="20"/>
+    </joint>
+    <link name="L_hippitch_link">
+        <inertial>
+            <mass value="4.3699915"/>
+            <inertia ixx="298924.68663e-6" ixy="352.44425e-6" ixz="7197.82909e-6" iyy="300685.59195e-6" iyz="-13956.63711e-6" izz="10177.56262e-6"/>
+            <origin rpy="0 0 0" xyz="8.85609e-3 -12.34699e-3 -236.4855e-3"/>
+            <!-- Since this is left leg, y coordinate is negative -->
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_thigh_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_thigh_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    <joint name="L_knee" type="revolute">
+        <parent link="L_hippitch_link"/>
+        <child link="L_shank_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0 0" xyz="0.0 -15.2e-3 -348e-3"/>
+        <limit effort="100" upper="2.61799" lower="0.0" velocity="20"/>
+    </joint>
+    <link name="L_shank_link">
+        <inertial>
+            <mass value="1.53872774"/>
+            <inertia ixx="94818.95217e-6" ixy="0.73746e-6" ixz="-1571.54542e-6" iyy="94726.4192e-6" iyz="40.20347e-6" izz="2088.92694e-6"/>
+            <origin rpy="0 0 0" xyz="-0.32914e-3 0.04704e-3 -219.68202e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/shank_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/shank_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    <joint name="L_anklepitch" type="revolute">
+        <parent link="L_shank_link"/>
+        <child link="L_ankle_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 -0.523599 0" xyz="0.0 0.0 -0.355"/>
+        <!--shift downwards, rotate by -30 deg-->
+        <limit effort="100" lower="-1.570796" upper="1.570796" velocity="20"/>
+    </joint>
+    <link name="L_ankle_link">
+        <inertial>
+            <mass value="0.20111053"/>
+            <inertia ixx="48.83414e-6" ixy="0.00143e-6" ixz="-0.0021e-6" iyy="45.95624e-6" iyz="0.00153e-6" izz="74.52458e-6"/>
+            <origin rpy="0 0 0" xyz="11.07071e-3 0.00053e-3 -0.00076e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/ankle_pitch_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/ankle_pitch_link.dae"/>
+            </geometry>
+        </collision>
+
+
+    </link>
+
+
+    <joint name="L_ankleroll" type="revolute">
+        <parent link="L_ankle_link"/>
+        <child link="L_foot_link"/>
+        <axis xyz="1 0 0"/>
+        <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+        <limit effort="100" lower="-0.523599" upper="0.523599" velocity="20"/>
+    </joint>
+    <link name="L_foot_link">
+        <inertial>
+            <mass value="0.67696856"/>
+            <inertia ixx="2711.33678e-6" ixy="-0.10761e-6" ixz="1805.42888e-6" iyy="4882.55547e-6" iyz="-0.08071e-6" izz="2592.25732e-6"/>
+            <origin rpy="0 0 0" xyz="22.09392e-3 -0.00337e-3 -50.15365e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/foot_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/foot_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="L_toepitch" type="revolute">
+        <parent link="L_foot_link"/>
+        <child link="L_toe_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0.523599 0" xyz="84.97837e-3 0.0 -85.43851e-3"/>
+        <limit effort="100" lower="-0.523599" upper="0.523599" velocity="20"/>
+    </joint>
+    <link name="L_toe_link">
+        <inertial>
+            <mass value="0.25395867"/>
+            <inertia ixx="422.66848e-6" ixy="0.30058e-6" ixz="201.67782e-6" iyy="648.32269e-6" iyz="0.69143e-6" izz="657.93967e-6"/>
+            <origin rpy="0 0 0" xyz="27.48999e-3 0.10489e-3 -26.31463e-3"/>
+        </inertial>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/toe_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/toe_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+    
+
+
+
+    <!--!!!!!!!!!!!! Right Arm !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+
+    <joint name="R_shoulderpitch" type="revolute">
+        <parent link="torso_link"/>
+        <child link="R_shoulderpitch_link"/>
+        <axis xyz="0 0 1"/>
+        <origin rpy="1.1345 0 0" xyz="0 -106.840e-3 300.24519e-3"/>
+        <!-- 65 degree tilt for first shoulder joint-->
+        <limit effort="100" lower="-2.61799387799" upper="0.9" velocity="20"/>
+    </joint>
+    <link name="R_shoulderpitch_link">
+        <inertial>
+            <mass value="0.55244303"/>
+            <inertia ixx="718.34875e-6" ixy="-0.36731e-6" ixz="32.12403e-6" iyy="489.44684e-6" iyz="-0.48227e-6" izz="355.10779e-6"/>
+            <origin rpy="0 0 0" xyz="-21.30946e-3 -0.03881e-3 62.86176e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_shoulder_pitch_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_shoulder_pitch_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="R_shoulderroll" type="revolute">
+        <parent link="R_shoulderpitch_link"/>
+        <child link="R_shoulderroll_link"/>
+        <axis xyz="1 0 0"/>
+        <origin rpy="-1.1345 0 0" xyz="-4e-3 0 69e-3"/>
+        <!-- undo 65 degree tilt-->
+        <limit effort="100" lower="-2.61799387799" upper="0" velocity="20"/>
+    </joint>
+    <link name="R_shoulderroll_link">
+        <inertial>
+            <mass value="0.04011818"/>
+            <inertia ixx="37.46692e-6" ixy="0e-6" ixz="0e-6" iyy="22.34269e-6" iyz="-14.24766e-6" izz="15.8147e-6"/>
+            <origin rpy="0 0 0" xyz="4e-3 -14.35868e-3 -16.08963e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_shoulder_roll_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_shoulder_roll_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="R_shoulderyaw" type="revolute">
+        <parent link="R_shoulderroll_link"/>
+        <child link="R_shoulderyaw_link"/>
+        <axis xyz="0 0 1"/>
+        <origin rpy="0 0 0" xyz="4e-3 -38e-3 -60e-3"/>
+        <limit effort="100" lower="0" upper="0" velocity="20"/>
+    </joint>
+    <link name="R_shoulderyaw_link">
+        <inertial>
+            <mass value="1.02342393"/>
+            <inertia ixx="14353.24969e-6" ixy="-1.29191e-6" ixz="-9.64646e-6" iyy="14449.75915e-6" iyz="-343.48627e-6" izz="820.44439e-6"/>
+            <origin rpy="0 0 0" xyz="-0.07068e-3 -5.45858e-3 -145.06542e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_upper_arm_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_upper_arm_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="R_elbowpitch" type="revolute">
+        <parent link="R_shoulderyaw_link"/>
+        <child link="R_elbowpitch_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0 0" xyz="0 11e-3 -279e-3"/>
+        <limit effort="100" lower="-2.61799387799" upper="0" velocity="20"/>
+    </joint>
+    <link name="R_elbowpitch_link">
+        <inertial>
+            <mass value="0.07122405"/>
+            <inertia ixx="732.24798e-6" ixy="-0.01868e-6" ixz="3.67205e-6" iyy="739.71266e-6" iyz="-0.17233e-6" izz="8.42502e-6"/>
+            <origin rpy="0 0 0" xyz="-1.97348e-3 3.52668e-3 -118.30683e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_forearm_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/r_forearm_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+   
+
+
+
+    <!--!!!!!!!!!!!! Left Arm !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+
+    <joint name="L_shoulderpitch" type="revolute">
+        <parent link="torso_link"/>
+        <child link="L_shoulderpitch_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="-1.1345 0 0" xyz="0 106.840e-3 300.24519e-3"/>
+        <!-- -65 degree tilt for first shoulder joint-->
+        <limit effort="100" lower="-2.61799387799" upper="0.9" velocity="20"/>
+    </joint>
+    <link name="L_shoulderpitch_link">
+        <inertial>
+            <mass value="0.55244254"/>
+            <inertia ixx="718.34741e-6" ixy="0.36787e-6" ixz="32.12389e-6" iyy="489.43705e-6" iyz="0.47289e-6" izz="355.11643e-6"/>
+            <origin rpy="0 0 0" xyz="-21.30946e-3 0.03878e-3 62.86181e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_shoulder_pitch_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_shoulder_pitch_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="L_shoulderroll" type="revolute">
+        <parent link="L_shoulderpitch_link"/>
+        <child link="L_shoulderroll_link"/>
+        <axis xyz="1 0 0"/>
+        <origin rpy="1.1345 0 0" xyz="-4e-3 0 69e-3"/>
+        <!-- undo -65 degree tilt-->
+        <limit effort="100" lower="0" upper="2.61799387799" velocity="20"/>
+    </joint>
+    <link name="L_shoulderroll_link">
+        <inertial>
+            <mass value="0.04011818"/>
+            <inertia ixx="37.46692e-6" ixy="0e-6" ixz="0e-6" iyy="22.34269e-6" iyz="14.24766e-6" izz="15.8147e-6"/>
+            <origin rpy="0 0 0" xyz="4e-3 14.35868e-3 -16.08963e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_shoulder_roll_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_shoulder_roll_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="L_shoulderyaw" type="revolute">
+        <parent link="L_shoulderroll_link"/>
+        <child link="L_shoulderyaw_link"/>
+        <axis xyz="0 0 1"/>
+        <origin rpy="0 0 0" xyz="4e-3 38e-3 -60e-3"/>
+        <limit effort="100" lower="0" upper="0" velocity="20"/>
+    </joint>
+    <link name="L_shoulderyaw_link">
+        <inertial>
+            <mass value="1.02342419"/>
+            <inertia ixx="14372.4367e-6" ixy="0.03396e-6" ixz="0.00737e-6" iyy="14469.04602e-6" iyz="360.74341e-6" izz="823.64928e-6"/>
+            <origin rpy="0 0 0" xyz="-0.00007e-3 5.31782e-3 -145.13576e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_upper_arm_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_upper_arm_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="L_elbowpitch" type="revolute">
+        <parent link="L_shoulderyaw_link"/>
+        <child link="L_elbowpitch_link"/>
+        <axis xyz="0 1 0"/>
+        <origin rpy="0 0 0" xyz="0 -11e-3 -279e-3"/>
+        <limit effort="100" lower="-2.61799387799" upper="0" velocity="20"/>
+    </joint>
+    <link name="L_elbowpitch_link">
+        <inertial>
+            <mass value="0.07122325"/>
+            <inertia ixx="732.23549e-6" ixy="0.01865e-6" ixz="3.67183e-6" iyy="739.70014e-6" iyz="0.1729e-6" izz="8.42499e-6"/>
+            <origin rpy="0 0 0" xyz="-1.97348e-3 -3.52661e-3 -118.30533e-3"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_forearm_link.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/l_forearm_link.dae"/>
+            </geometry>
+        </collision>
+    </link>
+
+</robot>

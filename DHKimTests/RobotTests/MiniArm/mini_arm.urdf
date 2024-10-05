@@ -1,0 +1,145 @@
+<robot name="MiniArm">
+  <!-- Link Definitions -->
+  <link name="base">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.02148 0.00173 -0.04417"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.06185585085" ixy="0.00052357046" ixz="-0.02204886469" iyy="0.46467853407" iyz="0.00058724812" izz="0.47162119244"/>
+    </inertial>
+     <visual>
+      <geometry>
+        <mesh filename="mesh_dae/BaseLink.dae" scale="10 10 10"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="column_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.02148 0.00173 -0.04417"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.06185585085" ixy="0.00052357046" ixz="-0.02204886469" iyy="0.46467853407" iyz="0.00058724812" izz="0.47162119244"/>
+    </inertial>
+     <visual>
+      <geometry>
+        <mesh filename="mesh_dae/ColumnLink.dae" scale="10 10 10"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="shoulder_pitch">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.02148 0.00173 -0.04417"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.06185585085" ixy="0.00052357046" ixz="-0.02204886469" iyy="0.46467853407" iyz="0.00058724812" izz="0.47162119244"/>
+    </inertial>
+     <visual>
+      <geometry>
+        <mesh filename="mesh_dae/ShoulderPitch.dae" scale="10 10 10"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="arm_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.02148 0.00173 -0.04417"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.06185585085" ixy="0.00052357046" ixz="-0.02204886469" iyy="0.46467853407" iyz="0.00058724812" izz="0.47162119244"/>
+    </inertial>
+     <visual>
+      <geometry>
+        <mesh filename="mesh_dae/ArmLink1.dae" scale="10 10 10"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="arm_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.02148 0.00173 -0.04417"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.06185585085" ixy="0.00052357046" ixz="-0.02204886469" iyy="0.46467853407" iyz="0.00058724812" izz="0.47162119244"/>
+    </inertial>
+     <visual>
+      <geometry>
+        <mesh filename="mesh_dae/ArmLink2.dae" scale="10 10 10"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="wrist_pitch">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.02148 0.00173 -0.04417"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.06185585085" ixy="0.00052357046" ixz="-0.02204886469" iyy="0.46467853407" iyz="0.00058724812" izz="0.47162119244"/>
+    </inertial>
+     <visual>
+      <geometry>
+        <mesh filename="mesh_dae/WristPitch.dae" scale="10 10 10"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="ee_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.02148 0.00173 -0.04417"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.06185585085" ixy="0.00052357046" ixz="-0.02204886469" iyy="0.46467853407" iyz="0.00058724812" izz="0.47162119244"/>
+    </inertial>
+     <visual>
+      <geometry>
+        <!-- <mesh filename="mesh_obj/EE_Frame.obj" scale="1.01 0.01 0.01"/> -->
+        <mesh filename="mesh_dae/EE_Frame.dae" scale="10 10 10"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- Joint Definitions -->
+  <joint name="miniarm_joint1" type="revolute">
+    <parent link="base"/>
+    <child link="column_link"/>
+    <origin xyz="-0.06 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-50" upper="50"/>
+  </joint>
+
+  <joint name="miniarm_joint2" type="revolute">
+    <parent link="column_link"/>
+    <child link="shoulder_pitch"/>
+    <origin xyz="0 0 0.4" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-50" upper="50"/>
+  </joint>
+
+  <joint name="miniarm_joint3" type="revolute">
+    <parent link="shoulder_pitch"/>
+    <child link="arm_1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-50" upper="50"/>
+  </joint>
+
+  <joint name="miniarm_joint4" type="revolute">
+    <parent link="arm_1"/>
+    <child link="arm_2"/>
+    <origin xyz="0.55 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-50" upper="50"/>
+  </joint>
+
+  <joint name="miniarm_joint5" type="revolute">
+    <parent link="arm_2"/>
+    <child link="wrist_pitch"/>
+    <origin xyz="0.45 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-20" upper="20"/>
+  </joint>
+
+  <joint name="miniarm_joint6" type="revolute">
+    <parent link="wrist_pitch"/>
+    <child link="ee_link"/>
+    <origin xyz="0.09 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-20" upper="20"/>
+  </joint>
+
+</robot>
+
