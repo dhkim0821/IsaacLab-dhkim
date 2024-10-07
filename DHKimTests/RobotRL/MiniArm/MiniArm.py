@@ -2,13 +2,9 @@ import omni.isaac.lab.sim as sim_utils
 from omni.isaac.lab.actuators import ImplicitActuatorCfg
 from omni.isaac.lab.assets.articulation import ArticulationCfg
 
-MINI_ARM_CFG = ArticulationCfg(
+MINIARM_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
-        # usd_path=f"/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotTests/mini_arm.usd",
-        # usd_path=f"/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotTests/mini_armBackUp.usd",
-        # usd_path=f"/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotTests/mini_arm_backup.usd",
-        usd_path=f"/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotTests/MiniArm.usd",
-        # usd_path=f"./DHKimTests/RobotTests/mini_arm.usd",
+        usd_path=f"/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotRL/MiniArm.usd",
         activate_contact_sensors=False,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=False,
@@ -50,12 +46,12 @@ MINI_ARM_CFG = ArticulationCfg(
 """Configuration of Mini Arm robot."""
 
 
-MINI_ARM_HIGH_PD_CFG = MINI_ARM_CFG.copy()
-MINI_ARM_HIGH_PD_CFG.spawn.rigid_props.disable_gravity = True
-MINI_ARM_HIGH_PD_CFG.actuators["miniarm_shoulder"].stiffness = 400.0
-MINI_ARM_HIGH_PD_CFG.actuators["miniarm_shoulder"].damping = 80.0
-MINI_ARM_HIGH_PD_CFG.actuators["miniarm_forearm"].stiffness = 400.0
-MINI_ARM_HIGH_PD_CFG.actuators["miniarm_forearm"].damping = 80.0
+MINIARM_HIGH_PD_CFG = MINIARM_CFG.copy()
+MINIARM_HIGH_PD_CFG.spawn.rigid_props.disable_gravity = True
+MINIARM_HIGH_PD_CFG.actuators["miniarm_shoulder"].stiffness = 400.0
+MINIARM_HIGH_PD_CFG.actuators["miniarm_shoulder"].damping = 80.0
+MINIARM_HIGH_PD_CFG.actuators["miniarm_forearm"].stiffness = 400.0
+MINIARM_HIGH_PD_CFG.actuators["miniarm_forearm"].damping = 80.0
 """Configuration of Mini Arm robot with stiffer PD control.
 This configuration is useful for task-space control using differential IK.
 """
