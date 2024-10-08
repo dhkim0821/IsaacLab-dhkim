@@ -24,5 +24,20 @@ def joint_pos_target(env: ManagerBasedRLEnv, target: torch.Tensor,
     asset: Articulation = env.scene[asset_cfg.name]
     # wrap the joint positions to (-pi, pi)
     joint_pos = wrap_to_pi(asset.data.joint_pos[:, asset_cfg.joint_ids])
+    # print("------------------")
+    # print(f"joint pos: \n {joint_pos}")
+    # print(f"target pos: \n {target}")
+    # print(torch.norm(joint_pos - target, dim=1))
+    # print("------------------")
+
     # compute the reward
-    return torch.sum(torch.square(joint_pos - target), dim=1)
+    # return torch.sum(torch.square(joint_pos - target), dim=1)
+    jpos_err = torch.norm(joint_pos - target, dim=1)
+    return 1 - torch.tanh(jpos_err/ 3.14)
+
+def joint_vel_suppression(env: ManagerBasedRLEnv) -> torch.Tensor:
+    """Penalize joint velocity."""
+    # extract the used quantities (to enable type-hinting)
+    asset: Articulation = env.scene["robot"]
+    # compute the reward
+    return torch.sum(torch.square(asset.data.joint_vel), dim=1)

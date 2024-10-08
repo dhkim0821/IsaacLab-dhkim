@@ -34,20 +34,29 @@ def main():
     while simulation_app.is_running():
         with torch.inference_mode():
             # reset
-            if count % 300 == 0:
+            if count % 1000 == 0:
                 count = 0
                 env.reset()
                 print("-" * 80)
                 print("[INFO]: Resetting environment...")
-            # sample random actions
-            joint_efforts = torch.randn_like(env.action_manager.action)
-            print("[INFO]: Joint efforts: ", joint_efforts)
-            # step the environment
-            obs, rew, terminated, truncated, info = env.step(joint_efforts)
-            # print current orientation of pole
-            # print("[Env 0]: Pole joint: ", obs["policy"][0][:])
-            # update counter
-            count += 1
+                # set joint effort to zero
+                joint_efforts = torch.zeros_like(env.action_manager.action)
+                print("[INFO]: Joint efforts: ", joint_efforts)
+                obs, rew, terminated, truncated, info = env.step(joint_efforts)
+
+                # pause = input("Press enter to continue...")
+                count += 1
+            else:
+                # sample random actions
+                # joint_efforts = torch.randn_like(env.action_manager.action)
+                joint_efforts = torch.zeros_like(env.action_manager.action)
+                print("[INFO]: Joint efforts: ", joint_efforts)
+                # step the environment
+                obs, rew, terminated, truncated, info = env.step(joint_efforts)
+                # print current orientation of pole
+                # print("[Env 0]: Pole joint: ", obs["policy"][0][:])
+                # update counter
+                count += 1
 
     # close the environment
     env.close()

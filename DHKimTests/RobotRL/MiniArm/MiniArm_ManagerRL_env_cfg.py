@@ -1,5 +1,6 @@
 import math
 
+import torch
 import omni.isaac.lab.sim as sim_utils
 from omni.isaac.lab.assets import ArticulationCfg, AssetBaseCfg
 from omni.isaac.lab.envs import ManagerBasedRLEnvCfg
@@ -25,7 +26,7 @@ import DHKimTests.RobotRL.MiniArm.MiniArm_mdp as mdp
 # import sys
 # print('mdp' in sys.modules)
 
-from .MiniArm_cfg import MINIARM_CFG # isort:skip
+from DHKimTests.RobotRL.MiniArm.MiniArm_cfg import MINIARM_CFG # isort:skip
 
 @configclass
 class MiniArmSceneCfg(InteractiveSceneCfg):
@@ -35,7 +36,6 @@ class MiniArmSceneCfg(InteractiveSceneCfg):
         spawn=sim_utils.GroundPlaneCfg(size=(100.0, 100.0)),
     )
 
-    # cartpole
     robot: ArticulationCfg = MINIARM_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
 
     # lights
@@ -69,7 +69,7 @@ class ActionsCfg:
     """Action specifications for the MDP."""
     joint_effort = mdp.JointEffortActionCfg(asset_name="robot", 
                                             joint_names=["miniarm_joint.*"], 
-                                            scale=25.0)
+                                            scale=5.0)
 
 
 @configclass
@@ -83,10 +83,15 @@ class ObservationsCfg:
         # observation terms (order preserved)
         joint_pos_rel = ObsTerm(func=mdp.joint_pos_rel)
         joint_vel_rel = ObsTerm(func=mdp.joint_vel_rel)
+        actions = ObsTerm(func=mdp.last_action)
 
-        def __post_init__(self) -> None:
-            self.enable_corruption = False
+        # def __post_init__(self) -> None:
+        #     self.enable_corruption = False
+        #     self.concatenate_terms = True
+        def __post_init__(self):
+            self.enable_corruption = True 
             self.concatenate_terms = True
+
 
     # observation groups
     policy: PolicyCfg = PolicyCfg()
@@ -102,8 +107,8 @@ class EventCfg:
         mode="reset",
         params={
             "asset_cfg": SceneEntityCfg("robot", joint_names=["miniarm_joint.*"]),
-            "position_range": (-3.0, 3.0),
-            "velocity_range": (-5.5, 5.5),
+            "position_range": (-3.1, 3.1),
+            "velocity_range": (-5.1, 5.1),
         },
     )
 
@@ -116,14 +121,25 @@ class RewardsCfg:
     alive = RewTerm(func=mdp.is_alive, weight=1.0)
     # (2) Failure penalty
     terminating = RewTerm(func=mdp.is_terminated, weight=-2.0)
-    # (3) Primary task: keep pole upright
+    # (3) Primary task: jpos control
     jpos_error = RewTerm(
         func=mdp.joint_pos_target,
-        weight=-1.0,
+        weight= 5.0,
         params={"asset_cfg": SceneEntityCfg("robot", 
                                             joint_names=["miniarm_joint.*"]), 
-                                            "target": 0.0},
+                                            "target": torch.tensor([0.0, -0.5, 0.0, 0.5, 0.0, 0.0], 
+                                                                   device="cuda")},
     )
+    joint_vel = RewTerm(
+        func=mdp.joint_vel_l2,
+        weight=-1e-4,
+        params={"asset_cfg": SceneEntityCfg("robot")},
+    )
+
+    # jvel_suppression = RewTerm(
+    #     func=mdp.joint_vel_suppression,
+    #     weight = -5)
+
     
 
 
@@ -138,7 +154,7 @@ class TerminationsCfg:
         func=mdp.joint_pos_out_of_manual_limit,
         params={"asset_cfg": SceneEntityCfg("robot", 
                                             joint_names=["miniarm_joint.*"]), 
-                                            "bounds": (-3.0, 3.0)},
+                                            "bounds": (-3.1, 3.1)},
     )
 
 
@@ -159,7 +175,7 @@ class MiniArmEnvCfg(ManagerBasedRLEnvCfg):
     """Configuration for the cartpole environment."""
 
     # Scene settings
-    scene: MiniArmSceneCfg = MiniArmSceneCfg(num_envs=2, env_spacing=2.5)
+    scene: MiniArmSceneCfg = MiniArmSceneCfg(num_envs=2048, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
@@ -175,10 +191,10 @@ class MiniArmEnvCfg(ManagerBasedRLEnvCfg):
     def __post_init__(self) -> None:
         """Post initialization."""
         # general settings
-        self.decimation = 2
-        self.episode_length_s = 5
+        self.decimation = 4
+        self.episode_length_s = 7 
         # viewer settings
         self.viewer.eye = (2.5, 2.5, 2.5)
         # simulation settings
-        self.sim.dt = 1 / 120
+        self.sim.dt = 1 / 200
         self.sim.render_interval = self.decimation
