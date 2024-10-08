@@ -14,13 +14,14 @@ from omni.isaac.lab.utils import configclass
 
 import omni.isaac.lab_tasks.manager_based.classic.cartpole.mdp as mdp_cartpole
 # import DHKimTests.RobotRL.MiniArm.mdp as mdp
-import DHKimTests.RobotRL.MiniArm.MiniArm_mdp as mdp
-# print("-------------------")
+# import DHKimTests.RobotRL.MiniArm.MiniArm_mdp as mdp
+import omni.isaac.lab_tasks.manager_based.MiniArm.MiniArm_mdp as mdp
+print("-------------------")
 # print("dir of mdp cartpole")
 # print(dir(mdp_cartpole))
-# print("dir of mdp MiniArm")
-# print(dir(mdp))
-# print("-------------------")
+print("dir of mdp MiniArm")
+print(dir(mdp))
+print("-------------------")
 # import sys
 # print('mdp' in sys.modules)
 
@@ -68,7 +69,7 @@ class ActionsCfg:
     """Action specifications for the MDP."""
     joint_effort = mdp.JointEffortActionCfg(asset_name="robot", 
                                             joint_names=["miniarm_joint.*"], 
-                                            scale=5.0)
+                                            scale=25.0)
 
 
 @configclass

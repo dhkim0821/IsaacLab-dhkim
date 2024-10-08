@@ -18,8 +18,20 @@ simulation_app = app_launcher.app
 """Rest everything follows."""
 import torch
 from omni.isaac.lab.envs import ManagerBasedRLEnv
-from MiniArm_env_cfg import MiniArmEnvCfg
+from omni.isaac.lab_tasks.manager_based.classic.cartpole.cartpole_env_cfg import CartpoleEnvCfg
+print("-------------------")
+print("dir of cartpole")
+print(dir(CartpoleEnvCfg))
 
+# from omni.isaac.lab_tasks.manager_based.MiniArm.MiniArm_ManagerRL_env_cfg import MiniArmEnvCfg
+from omni.isaac.lab_tasks.manager_based.MiniArm.MiniArm_ManagerRL_env_cfg import MiniArmEnvCfg
+# from omni.isaac.lab_tasks.manager_based.MiniArm import MiniArmEnvCfg
+# from omni.isaac.lab_tasks.manager_based.classic.cartpole.MiniArm_ManagerRL_env_cfg import MiniArmEnvCfg
+
+print("dir of MiniArm")
+print(dir(MiniArmEnvCfg))
+print("-------------------")
+#
 
 def main():
     """Main function."""
@@ -41,10 +53,11 @@ def main():
                 print("[INFO]: Resetting environment...")
             # sample random actions
             joint_efforts = torch.randn_like(env.action_manager.action)
+            print("[INFO]: Joint efforts: ", joint_efforts)
             # step the environment
             obs, rew, terminated, truncated, info = env.step(joint_efforts)
             # print current orientation of pole
-            print("[Env 0]: Pole joint: ", obs["policy"][0][1].item())
+            # print("[Env 0]: Pole joint: ", obs["policy"][0][:])
             # update counter
             count += 1
 
