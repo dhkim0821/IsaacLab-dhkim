@@ -27,6 +27,7 @@ import DHKimTests.RobotRL.MiniArm.MiniArm_mdp as mdp
 # print('mdp' in sys.modules)
 
 from DHKimTests.RobotRL.MiniArm.MiniArm_cfg import MINIARM_CFG # isort:skip
+from DHKimTests.RobotRL.MiniArm.MiniArmCmdCfg import UniformJPosCommandCfg
 
 @configclass
 class MiniArmSceneCfg(InteractiveSceneCfg):
@@ -60,8 +61,14 @@ class CommandsCfg:
     """Command terms for the MDP."""
 
     # no commands for this MDP
-    null = mdp.NullCommandCfg()
-    # null = mdp_cartpole.NullCommandCfg()
+    # null = mdp.NullCommandCfg()
+
+    # sample joint position target from uniform distribution ranged by [-pi, pi]
+    jpos_target = UniformJPosCommandCfg(
+        asset_name = "robot",
+        num_joints = 6,
+        resampling_time_range=(10.0, 10.0),
+    )
 
 
 @configclass
@@ -81,10 +88,14 @@ class ObservationsCfg:
         """Observations for policy group."""
 
         # observation terms (order preserved)
-        joint_pos_rel = ObsTerm(func=mdp.joint_pos_rel)
-        joint_vel_rel = ObsTerm(func=mdp.joint_vel_rel)
+        joint_pos_rel = ObsTerm(func=mdp.joint_pos)
+        joint_vel_rel = ObsTerm(func=mdp.joint_vel)
         actions = ObsTerm(func=mdp.last_action)
 
+        jpos_commands = ObsTerm(func=mdp.generated_commands, 
+                                params={"command_name": "jpos_target"})
+
+        print(jpos_commands)
         # def __post_init__(self) -> None:
         #     self.enable_corruption = False
         #     self.concatenate_terms = True
@@ -122,23 +133,30 @@ class RewardsCfg:
     # (2) Failure penalty
     terminating = RewTerm(func=mdp.is_terminated, weight=-2.0)
     # (3) Primary task: jpos control
+    # jpos_error = RewTerm(
+    #     func=mdp.joint_pos_target,
+    #     weight= 5.0,
+    #     params={"asset_cfg": SceneEntityCfg("robot", 
+    #                                         joint_names=["miniarm_joint.*"]), 
+    #                                         "target": torch.tensor([0.0, -0.5, 0.0, 0.5, 0.0, 0.0], 
+    #                                                                device="cuda")},
+    # )
     jpos_error = RewTerm(
-        func=mdp.joint_pos_target,
+        func=mdp.joint_pos_target_cmd,
         weight= 5.0,
         params={"asset_cfg": SceneEntityCfg("robot", 
                                             joint_names=["miniarm_joint.*"]), 
-                                            "target": torch.tensor([0.0, -0.5, 0.0, 0.5, 0.0, 0.0], 
-                                                                   device="cuda")},
+                                            "command_name": "jpos_target"}
     )
     joint_vel = RewTerm(
         func=mdp.joint_vel_l2,
-        weight=-1e-4,
+        weight=-0.05,
         params={"asset_cfg": SceneEntityCfg("robot")},
     )
 
     # jvel_suppression = RewTerm(
     #     func=mdp.joint_vel_suppression,
-    #     weight = -5)
+    #     weight = -0.1)
 
     
 

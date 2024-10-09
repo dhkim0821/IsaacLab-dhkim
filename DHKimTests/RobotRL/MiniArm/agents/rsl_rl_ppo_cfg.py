@@ -15,7 +15,7 @@ from omni.isaac.lab_tasks.utils.wrappers.rsl_rl import (
 @configclass
 class MiniArmPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 16
-    max_iterations = 1000
+    max_iterations = 500
     save_interval = 50
     experiment_name = "MiniArm"
     empirical_normalization = False
