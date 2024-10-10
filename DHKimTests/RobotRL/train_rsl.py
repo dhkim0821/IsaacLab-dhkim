@@ -63,6 +63,7 @@ from omni.isaac.lab.utils.io import dump_pickle, dump_yaml
 
 import omni.isaac.lab_tasks  # noqa: F401
 import DHKimTests.RobotRL.MiniArm  # noqa: F401
+import DHKimTests.RobotRL.H1_test # noqa: F401
 
 from omni.isaac.lab_tasks.utils import get_checkpoint_path
 from omni.isaac.lab_tasks.utils.hydra import hydra_task_config
