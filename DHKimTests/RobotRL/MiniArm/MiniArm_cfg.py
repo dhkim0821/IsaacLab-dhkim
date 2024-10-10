@@ -34,6 +34,7 @@ MINIARM_CFG = ArticulationCfg(
             # damping=4.0,
             stiffness=0.0,
             damping=0.3,
+            armature=0.3,
          ),
         "miniarm_forearm": ImplicitActuatorCfg(
             joint_names_expr=["miniarm_joint[5-6]"],
@@ -43,6 +44,7 @@ MINIARM_CFG = ArticulationCfg(
             # damping=4.0,
             stiffness=0.0,
             damping=0.3,
+            armature=0.1,
          ),
     },
     soft_joint_pos_limit_factor=1.0,

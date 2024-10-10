@@ -43,7 +43,7 @@ class UniformJPosCommand(CommandTerm):
 
     @property
     def command(self) -> torch.Tensor:
-        """The desired goal pose in the environment frame. Shape is (num_envs, 7)."""
+        """The desired goal pose in the environment frame. Shape is (num_envs, 6)."""
         return self.jpos_target 
 
     """

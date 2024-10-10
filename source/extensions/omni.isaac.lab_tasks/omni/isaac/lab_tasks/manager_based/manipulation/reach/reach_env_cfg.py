@@ -139,7 +139,8 @@ class RewardsCfg:
     end_effector_position_tracking_fine_grained = RewTerm(
         func=mdp.position_command_error_tanh,
         weight=0.1,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "std": 0.1, "command_name": "ee_pose"},
+        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), 
+                "std": 0.1, "command_name": "ee_pose"},
     )
     end_effector_orientation_tracking = RewTerm(
         func=mdp.orientation_command_error,

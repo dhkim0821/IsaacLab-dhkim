@@ -15,21 +15,9 @@ from omni.isaac.lab.utils import configclass
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 from omni.isaac.lab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
-import omni.isaac.lab_tasks.manager_based.classic.cartpole.mdp as mdp_cartpole
-# import DHKimTests.RobotRL.MiniArm.mdp as mdp
-# import DHKimTests.RobotRL.MiniArm.MiniArm_mdp as mdp
 import DHKimTests.RobotRL.MiniArm.MiniArm_mdp as mdp
-# print("-------------------")
-# print("dir of mdp cartpole")
-# print(dir(mdp_cartpole))
-# print("dir of mdp MiniArm")
-# print(dir(mdp))
-# print("-------------------")
-# import sys
-# print('mdp' in sys.modules)
 
 from DHKimTests.RobotRL.MiniArm.MiniArm_cfg import MINIARM_CFG # isort:skip
-from DHKimTests.RobotRL.MiniArm.MiniArmCmdCfg import UniformJPosCommandCfg
 
 @configclass
 class MiniArmSceneCfg(InteractiveSceneCfg):
@@ -60,15 +48,19 @@ class MiniArmSceneCfg(InteractiveSceneCfg):
 
 @configclass
 class CommandsCfg:
-    """Command terms for the MDP."""
-
-    # no commands for this MDP
-    # null = mdp.NullCommandCfg()
-
-    jpos_target = UniformJPosCommandCfg(
-        asset_name = "robot",
-        num_joints = 6,
-        resampling_time_range=(10.0, 10.0),
+    ee_target = mdp.UniformPoseCommandCfg(
+        asset_name="robot",
+        body_name="ee_link",
+        resampling_time_range=(4.0, 4.0),
+        debug_vis=True,
+        ranges=mdp.UniformPoseCommandCfg.Ranges(
+            pos_x=(0.45, 0.85),
+            pos_y=(-0.2, 0.2),
+            pos_z=(0.15, 0.5),
+            roll=(-0.2, 0.2),
+            pitch= (-1.5, 1.5),  # depends on end-effector axis
+            yaw=(-0.5, 0.5),
+        ),
     )
 
 @configclass
@@ -88,14 +80,13 @@ class ObservationsCfg:
         """Observations for policy group."""
 
         # observation terms (order preserved)
-        joint_pos_rel = ObsTerm(func=mdp.joint_pos)
-        joint_vel_rel = ObsTerm(func=mdp.joint_vel)
+        joint_pos = ObsTerm(func=mdp.joint_pos)
+        joint_vel = ObsTerm(func=mdp.joint_vel)
         actions = ObsTerm(func=mdp.last_action)
 
-        jpos_commands = ObsTerm(func=mdp.generated_commands, 
-                                params={"command_name": "jpos_target"})
+        ee_pose_target = ObsTerm(func=mdp.generated_commands, 
+                                params={"command_name": "ee_target"})
 
-        print(jpos_commands)
         # def __post_init__(self) -> None:
         #     self.enable_corruption = False
         #     self.concatenate_terms = True
@@ -111,7 +102,6 @@ class ObservationsCfg:
 @configclass
 class EventCfg:
     """Configuration for events."""
-
     # reset
     reset_joint_position = EventTerm(
         func=mdp.reset_joints_by_offset,
@@ -132,33 +122,30 @@ class RewardsCfg:
     alive = RewTerm(func=mdp.is_alive, weight=1.0)
     # (2) Failure penalty
     terminating = RewTerm(func=mdp.is_terminated, weight=-2.0)
-    # (3) Primary task: jpos control
-    # jpos_error = RewTerm(
-    #     func=mdp.joint_pos_target,
-    #     weight= 5.0,
-    #     params={"asset_cfg": SceneEntityCfg("robot", 
-    #                                         joint_names=["miniarm_joint.*"]), 
-    #                                         "target": torch.tensor([0.0, -0.5, 0.0, 0.5, 0.0, 0.0], 
-    #                                                                device="cuda")},
-    # )
-    jpos_error = RewTerm(
-        func=mdp.joint_pos_target_cmd,
-        weight= 5.0,
-        params={"asset_cfg": SceneEntityCfg("robot"), 
-                                            "command_name": "jpos_target"}
+    # (3) Primary task: EE Pose Ctrl
+    ee_pos_error = RewTerm(
+        func=mdp.position_command_error,
+        weight= -0.3,
+        params={"asset_cfg": SceneEntityCfg("robot", body_names=["ee_link"]),
+                                            "command_name": "ee_target"}
+    )
+    ee_pos_error_fine = RewTerm(
+        func=mdp.position_command_error_tanh,
+        weight= 1.5,
+        params={"asset_cfg": SceneEntityCfg("robot", body_names=["ee_link"]),
+                                            "command_name": "ee_target"}
+    )
+    ee_ori_error = RewTerm(
+        func=mdp.orientation_command_error,
+        weight= -0.5,
+        params={"asset_cfg": SceneEntityCfg("robot", body_names=["ee_link"]),
+                                            "command_name": "ee_target"}
     )
     joint_vel = RewTerm(
         func=mdp.joint_vel_l2,
         weight=-0.05,
         params={"asset_cfg": SceneEntityCfg("robot")},
     )
-
-    # jvel_suppression = RewTerm(
-    #     func=mdp.joint_vel_suppression,
-    #     weight = -0.1)
-
-    
-
 
 @configclass
 class TerminationsCfg:
@@ -182,15 +169,8 @@ class CurriculumCfg:
     pass
 
 
-##
-# Environment configuration
-##
-
-
 @configclass
-class MiniArmEnvCfg(ManagerBasedRLEnvCfg):
-    """Configuration for the cartpole environment."""
-
+class MiniArmEE_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
     scene: MiniArmSceneCfg = MiniArmSceneCfg(num_envs=2048, env_spacing=2.5)
     # Basic settings
@@ -209,7 +189,7 @@ class MiniArmEnvCfg(ManagerBasedRLEnvCfg):
         """Post initialization."""
         # general settings
         self.decimation = 4
-        self.episode_length_s = 7 
+        self.episode_length_s = 12
         # viewer settings
         self.viewer.eye = (2.5, 2.5, 2.5)
         # simulation settings
