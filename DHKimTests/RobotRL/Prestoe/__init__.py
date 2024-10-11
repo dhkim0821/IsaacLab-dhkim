@@ -1,41 +1,26 @@
-# Copyright (c) 2022-2024, The Isaac Lab Project Developers.
-# All rights reserved.
-#
-# SPDX-License-Identifier: BSD-3-Clause
-
-"""
-Humanoid locomotion environment.
-"""
-
 import gymnasium as gym
 
 from . import agents
-from .prestoe_env import PrestoeEnv,PrestoeEnvCfg 
-
-##
-# Register Gym environments.
-##
+from .Prestoe_env_cfg import Prestoe_EnvCfg, Prestoe_EnvCfg_PLAY
 
 gym.register(
-    id="Isaac-Humanoid-Direct-v0",
-    entry_point="omni.isaac.lab_tasks.direct.humanoid:HumanoidEnv",
+    id="Prestoe-RL-v0",
+    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
-        "env_cfg_entry_point": HumanoidEnvCfg,
-        "rl_games_cfg_entry_point": f"{agents.__name__}:rl_games_ppo_cfg.yaml",
-        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:HumanoidPPORunnerCfg",
+        "env_cfg_entry_point": Prestoe_EnvCfg,
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Prestoe_PPORunnerCfg",
         "skrl_cfg_entry_point": f"{agents.__name__}:skrl_ppo_cfg.yaml",
     },
 )
 
 gym.register(
-    id="Isaac-H1-Direct-v0",
-    entry_point="omni.isaac.lab_tasks.direct.humanoid:H1Env",
+    id="Prestoe-RL-Play-v0",
+    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
-        "env_cfg_entry_point": H1EnvCfg,
-        "rl_games_cfg_entry_point": f"{agents.__name__}:rl_games_ppo_cfg.yaml",
-        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:HumanoidPPORunnerCfg",
+        "env_cfg_entry_point": Prestoe_EnvCfg_PLAY,
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Prestoe_PPORunnerCfg",
         "skrl_cfg_entry_point": f"{agents.__name__}:skrl_ppo_cfg.yaml",
     },
 )
