@@ -14,8 +14,8 @@ from omni.isaac.lab_tasks.utils.wrappers.rsl_rl import (
 @configclass
 class Prestoe_PPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
-    max_iterations = 3001
-    save_interval = 100
+    max_iterations = 6001
+    save_interval = 200
     experiment_name = "prestoe_test"
     empirical_normalization = False
     policy = RslRlPpoActorCriticCfg(

@@ -27,9 +27,9 @@ PRESTOE_CFG = ArticulationCfg(
         joint_pos={
             ".*_hipyaw": 0.0,
             ".*_hiproll": 0.0,
-            ".*_hippitch": -0.28,  # -16 degrees
-            ".*_knee": 0.59,  # 45 degrees
-            ".*_anklepitch": -0.52,  # -30 degrees
+            ".*_hippitch": 0.0,  # -16 degrees
+            ".*_knee": 0.0,  # 45 degrees
+            ".*_anklepitch": 0.0,  # -30 degrees
             ".*_ankleroll": 0.0,  # 0 degrees
             ".*_toepitch": 0.0,  # -30 degrees
             "torsoyaw": 0.0,
@@ -44,7 +44,7 @@ PRESTOE_CFG = ArticulationCfg(
     actuators={
         "legs": ImplicitActuatorCfg(
             joint_names_expr=[".*_hipyaw", ".*_hiproll", ".*_hippitch", 
-                              ".*_knee", ".*_anklepitch", ".*_ankleroll", ".*_toepitch",
+                              ".*_knee",
                               "torsoyaw"],
             effort_limit=300,
             velocity_limit=100.0,
@@ -63,16 +63,21 @@ PRESTOE_CFG = ArticulationCfg(
                 "torsoyaw": 5.0,
             },
         ),
-        "feet": ImplicitActuatorCfg(
+        "ankle": ImplicitActuatorCfg(
             joint_names_expr=[".*_anklepitch", ".*_ankleroll", ".*_toepitch"],
             effort_limit=100,
             velocity_limit=100.0,
             stiffness={".*_anklepitch": 20.0,
-                       ".*_ankleroll": 20.0,
-                       ".*_toepitch": 20.0},
+                       ".*_ankleroll": 20.0},
             damping={".*_anklepitch": 4.0,
-                     ".*_ankleroll": 4.0,
-                     ".*_toepitch": 4.0},
+                     ".*_ankleroll": 4.0},
+        ),
+        "toe": ImplicitActuatorCfg(
+            joint_names_expr=[".*_toepitch"],
+            effort_limit=50,
+            velocity_limit=50.0,
+            stiffness={".*_toepitch": 20.0},
+            damping={".*_toepitch": 4.0},
         ),
         "arms": ImplicitActuatorCfg(
             joint_names_expr=[".*_shoulderpitch", ".*_shoulderroll", ".*_shoulderyaw", ".*_elbowpitch"],

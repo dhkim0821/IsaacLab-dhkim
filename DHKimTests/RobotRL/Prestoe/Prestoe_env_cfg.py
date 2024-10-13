@@ -276,11 +276,11 @@ class PrestoeRewards:
     )
     joint_deviation_arms = RewTerm(
         func=mdp.joint_deviation_l1,
-        weight=-0.2,
+        weight=-0.02,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*_shoulder.*", ".*_elbowpitch"])},
     )
     joint_deviation_torso = RewTerm(
-        func=mdp.joint_deviation_l1, weight=-0.1, 
+        func=mdp.joint_deviation_l1, weight=-0.01, 
         params={"asset_cfg": SceneEntityCfg("robot", joint_names="torsoyaw")}
     )
 
@@ -311,7 +311,8 @@ class CurriculumCfg:
 @configclass
 class Prestoe_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
-    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
@@ -396,7 +397,7 @@ class Prestoe_EnvCfg_PLAY(Prestoe_EnvCfg):
         super().__post_init__()
 
         # make a smaller scene for play
-        self.scene.num_envs = 50
+        self.scene.num_envs = 20
         self.scene.env_spacing = 2.5
         self.episode_length_s = 20.0
         # spawn the robot randomly in the grid (instead of their terrain levels)

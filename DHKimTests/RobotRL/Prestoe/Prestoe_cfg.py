@@ -21,15 +21,15 @@ Prestoe_CFG = ArticulationCfg(
         ),
     ),
     init_state=ArticulationCfg.InitialStateCfg(
-        pos=(0.0, 0.0, 1.05),
+        pos=(0.0, 0.0, 1.0),
         joint_pos={
             ".*_hipyaw": 0.0,
             ".*_hiproll": 0.0,
-            ".*_hippitch": -0.28,  # -16 degrees
-            ".*_knee": 0.59,  # 45 degrees
-            ".*_anklepitch": -0.52,  # -30 degrees
+            ".*_hippitch": -0.15,  # -16 degrees
+            ".*_knee": 0.25,  # 45 degrees
+            ".*_anklepitch": -0.4,  # -30 degrees
             ".*_ankleroll": 0.0,  # 0 degrees
-            ".*_toepitch": 0.0,  # -30 degrees
+            ".*_toepitch": 0.05,  # -30 degrees
             "torsoyaw": 0.0,
             ".*_shoulderpitch": 0.2,
             ".*_shoulderroll": 0.0,
@@ -40,42 +40,48 @@ Prestoe_CFG = ArticulationCfg(
     ),
     soft_joint_pos_limit_factor=0.9,
     actuators={
-        "legs": ImplicitActuatorCfg(
-            joint_names_expr=[".*_hipyaw", ".*_hiproll", ".*_hippitch", 
-                              ".*_knee", ".*_anklepitch", ".*_ankleroll", ".*_toepitch",
-                              "torsoyaw"],
-            effort_limit=300,
-            velocity_limit=100.0,
+        "hips": ImplicitActuatorCfg(
+            joint_names_expr=[".*_hipyaw", ".*_hiproll", ".*_hippitch", "torsoyaw"],
+            effort_limit=70,
+            velocity_limit=30.0,
             stiffness={
                 ".*_hipyaw": 150.0,
                 ".*_hiproll": 150.0,
                 ".*_hippitch": 200.0,
-                ".*_knee": 200.0,
                 "torsoyaw": 200.0,
             },
             damping={
                 ".*_hipyaw": 5.0,
                 ".*_hiproll": 5.0,
                 ".*_hippitch": 5.0,
-                ".*_knee": 5.0,
                 "torsoyaw": 5.0,
             },
         ),
-        "feet": ImplicitActuatorCfg(
-            joint_names_expr=[".*_anklepitch", ".*_ankleroll", ".*_toepitch"],
-            effort_limit=100,
-            velocity_limit=100.0,
-            stiffness={".*_anklepitch": 20.0,
-                       ".*_ankleroll": 20.0,
-                       ".*_toepitch": 20.0},
-            damping={".*_anklepitch": 4.0,
-                     ".*_ankleroll": 4.0,
-                     ".*_toepitch": 4.0},
+        "legs": ImplicitActuatorCfg(
+            joint_names_expr=[".*_knee"],
+            effort_limit=200,
+            velocity_limit=50.0,
+            stiffness={ ".*_knee": 200.0 },
+            damping={ ".*_knee": 5.0 },
         ),
-        "arms": ImplicitActuatorCfg(
+        "feet": ImplicitActuatorCfg(
+            joint_names_expr=[".*_anklepitch"],
+            effort_limit=100,
+            velocity_limit=30.0,
+            stiffness={".*_anklepitch": 20.0 },
+            damping={".*_anklepitch": 4.0},
+        ),
+        "toe": ImplicitActuatorCfg(
+            joint_names_expr=[".*_ankleroll", ".*_toepitch"],
+            effort_limit=40,
+            velocity_limit=20.0,
+            stiffness={".*_ankleroll": 20.0, ".*_toepitch": 20.0},
+            damping={".*_ankleroll": 4.0, ".*_toepitch": 4.0},
+        ),
+         "arms": ImplicitActuatorCfg(
             joint_names_expr=[".*_shoulderpitch", ".*_shoulderroll", ".*_shoulderyaw", ".*_elbowpitch"],
-            effort_limit=300,
-            velocity_limit=100.0,
+            effort_limit=100,
+            velocity_limit=20.0,
             stiffness={
                 ".*_shoulderpitch": 40.0,
                 ".*_shoulderroll": 40.0,
