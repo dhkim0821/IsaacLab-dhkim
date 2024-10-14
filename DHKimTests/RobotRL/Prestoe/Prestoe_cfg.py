@@ -27,9 +27,9 @@ Prestoe_CFG = ArticulationCfg(
             ".*_hiproll": 0.0,
             ".*_hippitch": -0.15,  # -16 degrees
             ".*_knee": 0.25,  # 45 degrees
-            ".*_anklepitch": -0.4,  # -30 degrees
+            ".*_anklepitch": -0.2,  # -30 degrees
             ".*_ankleroll": 0.0,  # 0 degrees
-            ".*_toepitch": 0.05,  # -30 degrees
+            ".*_toepitch": 0.02,  # -30 degrees
             "torsoyaw": 0.0,
             ".*_shoulderpitch": 0.2,
             ".*_shoulderroll": 0.0,
