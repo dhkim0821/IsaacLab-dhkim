@@ -32,7 +32,7 @@ gym.register(
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": Prestoe_FlatWalking_EnvCfg,
-        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Prestoe_PPORunnerCfg",
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Prestoe_PPO_FlatWalking_Cfg",
         "skrl_cfg_entry_point": f"{agents.__name__}:skrl_ppo_cfg.yaml",
     },
 )
@@ -43,7 +43,7 @@ gym.register(
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": Prestoe_FlatWalking_EnvCfg_PLAY,
-        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Prestoe_PPORunnerCfg",
+        "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:Prestoe_PPO_FlatWalking_Cfg",
         "skrl_cfg_entry_point": f"{agents.__name__}:skrl_ppo_cfg.yaml",
     },
 )

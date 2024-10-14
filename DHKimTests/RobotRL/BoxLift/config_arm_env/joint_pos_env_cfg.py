@@ -11,8 +11,12 @@ from omni.isaac.lab.sim.spawners.from_files.from_files_cfg import UsdFileCfg
 from omni.isaac.lab.utils import configclass
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 
-from omni.isaac.lab_tasks.manager_based.manipulation.lift import mdp
-from omni.isaac.lab_tasks.manager_based.manipulation.lift.lift_env_cfg import LiftEnvCfg
+# from omni.isaac.lab_tasks.manager_based.manipulation.lift import mdp
+# from omni.isaac.lab_tasks.manager_based.manipulation.lift.lift_env_cfg import LiftEnvCfg
+
+import DHKimTests.RobotRL.BoxLift.mdp as mdp
+import DHKimTests.RobotRL.BoxLift.lift_env_cfg as LiftEnvCfg 
+
 
 ##
 # Pre-defined configs

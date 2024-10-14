@@ -31,9 +31,9 @@ GENTLE_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
-        "boxes": terrain_gen.MeshRandomGridTerrainCfg(
-            proportion=0.2, grid_width=0.55, grid_height_range=(0.01, 0.06), platform_width=3.0
-        ),
+        # "boxes": terrain_gen.MeshRandomGridTerrainCfg(
+        #     proportion=0.2, grid_width=0.55, grid_height_range=(0.01, 0.06), platform_width=3.0
+        # ),
         "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
             proportion=0.2, noise_range=(0.02, 0.06), noise_step=0.02, border_width=0.25
         ),

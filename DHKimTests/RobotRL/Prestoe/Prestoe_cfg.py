@@ -25,16 +25,16 @@ Prestoe_CFG = ArticulationCfg(
         joint_pos={
             ".*_hipyaw": 0.0,
             ".*_hiproll": 0.0,
-            ".*_hippitch": -0.15,  # -16 degrees
-            ".*_knee": 0.25,  # 45 degrees
-            ".*_anklepitch": -0.2,  # -30 degrees
+            ".*_hippitch": -0.05,  # -16 degrees
+            ".*_knee": 0.1,  # 45 degrees
+            ".*_anklepitch": -0.1,  # -30 degrees
             ".*_ankleroll": 0.0,  # 0 degrees
             ".*_toepitch": 0.02,  # -30 degrees
             "torsoyaw": 0.0,
-            ".*_shoulderpitch": 0.2,
+            ".*_shoulderpitch": 0.1,
             ".*_shoulderroll": 0.0,
             ".*_shoulderyaw": 0.0,
-            ".*_elbowpitch": -0.5,
+            ".*_elbowpitch": -0.3,
         },
         joint_vel={".*": 0.0},
     ),

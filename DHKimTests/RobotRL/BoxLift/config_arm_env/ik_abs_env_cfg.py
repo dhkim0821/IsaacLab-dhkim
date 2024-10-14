@@ -12,8 +12,9 @@ from omni.isaac.lab.sim.spawners import UsdFileCfg
 from omni.isaac.lab.utils import configclass
 from omni.isaac.lab.utils.assets import ISAACLAB_NUCLEUS_DIR
 
-import omni.isaac.lab_tasks.manager_based.manipulation.lift.mdp as mdp
-
+# import omni.isaac.lab_tasks.manager_based.manipulation.lift.mdp as mdp
+import DHKimTests.RobotRL.BoxLift.mdp as mdp
+# from DHKimTests.RobotRL.BoxLift.config_arm_env import joint_pos_env_cfg
 from . import joint_pos_env_cfg
 
 ##

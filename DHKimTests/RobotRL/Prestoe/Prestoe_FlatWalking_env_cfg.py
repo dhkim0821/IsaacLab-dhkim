@@ -190,7 +190,6 @@ class PrestoeRewards:
     """Reward terms for the MDP."""
     ## Velocity Environment's reward
     # -- penalties
-    # lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-2.0)
     ang_vel_xy_l2 = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
     dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
@@ -207,7 +206,6 @@ class PrestoeRewards:
 
     ## Prestoe specific
     termination_penalty = RewTerm(func=mdp.is_terminated, weight=-200.0)
-    # lin_vel_z_l2 = None
     track_lin_vel_xy_exp = RewTerm(
         func=mdp.track_lin_vel_xy_yaw_frame_exp,
         weight=1.0,
@@ -219,7 +217,7 @@ class PrestoeRewards:
     )
     feet_air_time = RewTerm(
         func=mdp.feet_air_time_positive_biped,
-        weight=0.25,
+        weight=0.1,
         params={
             "command_name": "base_velocity",
             "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
@@ -235,10 +233,10 @@ class PrestoeRewards:
         },
     )
     # Penalize ankle joint limits
-    dof_pos_limits = RewTerm(
-        func=mdp.joint_pos_limits, weight=-1.0, 
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_anklepitch")}
-    )
+    # dof_pos_limits = RewTerm(
+    #     func=mdp.joint_pos_limits, weight=-1.0, 
+    #     params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_anklepitch")}
+    # )
     # Penalize deviation from default of the joints that are not essential for locomotion
     joint_deviation_hip = RewTerm(
         func=mdp.joint_deviation_l1,
@@ -247,15 +245,15 @@ class PrestoeRewards:
     )
     joint_deviation_arms = RewTerm(
         func=mdp.joint_deviation_l1,
-        weight=-0.02,
+        weight=-0.03,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*_shoulder.*", ".*_elbowpitch"])},
     )
     joint_deviation_torso = RewTerm(
-        func=mdp.joint_deviation_l1, weight=-0.01, 
+        func=mdp.joint_deviation_l1, weight=-0.03, 
         params={"asset_cfg": SceneEntityCfg("robot", joint_names="torsoyaw")}
     )
     knee_stretch = RewTerm(
-        func=mdp.joint_deviation_l1, weight=-0.02, 
+        func=mdp.joint_deviation_l1, weight=-0.001, 
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_knee")}
     )
 
@@ -288,7 +286,7 @@ class CurriculumCfg:
 class Prestoe_FlatWalking_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
     # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
-    scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=1800, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
