@@ -19,7 +19,8 @@ simulation_app = app_launcher.app
 import torch
 from omni.isaac.lab.envs import ManagerBasedRLEnv
 # from DHKimTests.RobotRL.BoxLift.lift_env_cfg import LiftEnvCfg
-from DHKimTests.RobotRL.BoxLift.config_arm_env.joint_pos_env_cfg import FrankaCubeLiftEnvCfg
+# from DHKimTests.RobotRL.BoxLift.config_arm_env.joint_pos_env_cfg import FrankaCubeLiftEnvCfg
+from DHKimTests.RobotRL.BoxLift.config_arm_env.jpos_box_env_cfg import FrankaCubeLiftEnvCfg
 
 
 def main():
