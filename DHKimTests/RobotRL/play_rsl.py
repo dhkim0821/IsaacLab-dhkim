@@ -51,6 +51,7 @@ import omni.isaac.lab_tasks  # noqa: F401
 import DHKimTests.RobotRL.MiniArm  # noqa: F401
 import DHKimTests.RobotRL.H1_test # noqa: F401
 import DHKimTests.RobotRL.Prestoe # noqa: F401
+import DHKimTests.RobotRL.BoxLift # noqa: F401
 
 from omni.isaac.lab_tasks.utils import get_checkpoint_path, parse_env_cfg
 from omni.isaac.lab_tasks.utils.wrappers.rsl_rl import (
