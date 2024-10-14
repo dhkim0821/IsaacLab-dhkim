@@ -15,7 +15,7 @@ from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 # from omni.isaac.lab_tasks.manager_based.manipulation.lift.lift_env_cfg import LiftEnvCfg
 
 import DHKimTests.RobotRL.BoxLift.mdp as mdp
-import DHKimTests.RobotRL.BoxLift.lift_env_cfg as LiftEnvCfg 
+from DHKimTests.RobotRL.BoxLift.lift_env_cfg import LiftEnvCfg 
 
 
 ##

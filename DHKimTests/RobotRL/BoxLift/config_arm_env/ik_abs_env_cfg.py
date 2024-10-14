@@ -59,7 +59,6 @@ class FrankaCubeLiftEnvCfg_PLAY(FrankaCubeLiftEnvCfg):
         # disable randomization for play
         self.observations.policy.enable_corruption = False
 
-
 ##
 # Deformable object lift environment.
 ##
@@ -109,3 +108,4 @@ class FrankaTeddyBearLiftEnvCfg(FrankaCubeLiftEnvCfg):
         self.rewards.object_goal_tracking = None
         self.rewards.object_goal_tracking_fine_grained = None
         self.observations.policy.object_position = None
+

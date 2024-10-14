@@ -21,9 +21,7 @@ from omni.isaac.lab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 # import omni.isaac.lab_tasks.manager_based.locomotion.velocity.mdp as mdp
 import DHKimTests.RobotRL.Prestoe.Prestoe_mdp as mdp
 
-# from omni.isaac.lab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
-from DHKimTests.RobotRL.Prestoe.config.rough_terrain import GENTLE_ROUGH_TERRAINS_CFG  # isort: skip
-
+from omni.isaac.lab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
 
 
 ##
@@ -38,9 +36,8 @@ class MySceneCfg(InteractiveSceneCfg):
     # ground terrain
     terrain = TerrainImporterCfg(
         prim_path="/World/ground",
-        terrain_type="generator",
-        terrain_generator=GENTLE_ROUGH_TERRAINS_CFG,
-        max_init_terrain_level=2,
+        terrain_type="plane",
+        terrain_generator=None,
         collision_group=-1,
         physics_material=sim_utils.RigidBodyMaterialCfg(
             friction_combine_mode="multiply",
@@ -57,7 +54,6 @@ class MySceneCfg(InteractiveSceneCfg):
     )
     # robots
     robot: ArticulationCfg = MISSING
-
     contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", history_length=3, track_air_time=True)
     # lights
     sky_light = AssetBaseCfg(
@@ -81,7 +77,7 @@ class CommandsCfg:
         heading_control_stiffness=0.5,
         debug_vis=True,
         ranges=mdp.UniformVelocityCommandCfg.Ranges(
-            lin_vel_x=(-1.0, 1.7), lin_vel_y=(-1.0, 1.0), 
+            lin_vel_x=(-1.0, 1.0), lin_vel_y=(-1.0, 1.0), 
             ang_vel_z=(-1.0, 1.0), heading=(-math.pi, math.pi)
         ),
     )
@@ -89,6 +85,8 @@ class CommandsCfg:
 
 @configclass
 class ActionsCfg:
+    """Action specifications for the MDP."""
+
     joint_pos = mdp.JointPositionActionCfg(asset_name="robot", 
                                            joint_names=[".*"], scale=0.5, use_default_offset=True)
 
@@ -113,7 +111,7 @@ class ObservationsCfg:
         joint_pos = ObsTerm(func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
         joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=Unoise(n_min=-1.5, n_max=1.5))
         actions = ObsTerm(func=mdp.last_action)
-    
+
         def __post_init__(self):
             self.enable_corruption = True
             self.concatenate_terms = True
@@ -139,6 +137,15 @@ class EventCfg:
         },
     )
 
+    add_base_mass = EventTerm(
+        func=mdp.randomize_rigid_body_mass,
+        mode="startup",
+        params={
+            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
+            "mass_distribution_params": (-5.0, 5.0),
+            "operation": "add",
+        },
+    )
 
     # reset
     base_external_force_torque = EventTerm(
@@ -198,7 +205,7 @@ class PrestoeRewards:
         func=mdp.undesired_contacts,
         weight=-1.0,
         params={"sensor_cfg": 
-                SceneEntityCfg("contact_forces", body_names=".*foot_link"), "threshold": 1.0},
+                SceneEntityCfg("contact_forces", body_names=".*thigh_link"), "threshold": 1.0},
     )
     # -- optional penalties
     flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=0.0)
@@ -208,57 +215,50 @@ class PrestoeRewards:
     termination_penalty = RewTerm(func=mdp.is_terminated, weight=-200.0)
     track_lin_vel_xy_exp = RewTerm(
         func=mdp.track_lin_vel_xy_yaw_frame_exp,
-        weight=1.1,
+        weight=1.0,
         params={"command_name": "base_velocity", "std": 0.5},
     )
     track_ang_vel_z_exp = RewTerm(
         func=mdp.track_ang_vel_z_world_exp, weight=1.0, params={
             "command_name": "base_velocity", "std": 0.5}
     )
-    # feet_air_time = RewTerm(
-    #     func=mdp.feet_air_time_positive_biped,
-    #     weight=1.0,
-    #     params={
-    #         "command_name": "base_velocity",
-    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
-    #         "threshold": 0.6,
-    #     },
-    # )
-    # feet_slide = RewTerm(
-    #     func=mdp.feet_slide,
-    #     weight=-0.25,
-    #     params={
-    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
-    #         "asset_cfg": SceneEntityCfg("robot", body_names=".*foot_link"),
-    #     },
-    # )
-
+    feet_air_time = RewTerm(
+        func=mdp.feet_air_time_positive_biped,
+        weight=1.0,
+        params={
+            "command_name": "base_velocity",
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
+            "threshold": 0.6,
+        },
+    )
+    feet_slide = RewTerm(
+        func=mdp.feet_slide,
+        weight=-0.25,
+        params={
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
+            "asset_cfg": SceneEntityCfg("robot", body_names=".*foot_link"),
+        },
+    )
     # Penalize ankle joint limits
     dof_pos_limits = RewTerm(
         func=mdp.joint_pos_limits, weight=-1.0, 
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_anklepitch")}
     )
-
     # Penalize deviation from default of the joints that are not essential for locomotion
     joint_deviation_hip = RewTerm(
         func=mdp.joint_deviation_l1,
-        weight=-0.3,
+        weight=-0.2,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*_hipyaw", ".*_hiproll"])},
     )
     joint_deviation_arms = RewTerm(
         func=mdp.joint_deviation_l1,
-        weight=-0.2,
+        weight=-0.02,
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*_shoulder.*", ".*_elbowpitch"])},
     )
     joint_deviation_torso = RewTerm(
-        func=mdp.joint_deviation_l1, weight=-0.03, 
+        func=mdp.joint_deviation_l1, weight=-0.01, 
         params={"asset_cfg": SceneEntityCfg("robot", joint_names="torsoyaw")}
     )
-    knee_stretch = RewTerm(
-        func=mdp.joint_deviation_l1, weight=-0.01, 
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_knee")}
-    )
-
 
 
 @configclass
@@ -279,16 +279,14 @@ class TerminationsCfg:
 
 @configclass
 class CurriculumCfg:
-    """Curriculum terms for the MDP."""
-
-    terrain_levels = CurrTerm(func=mdp.terrain_levels_vel)
+    terrain_levels = None
 
 
 @configclass
-class Prestoe_FlatWalking_EnvCfg(ManagerBasedRLEnvCfg):
+class Prestoe_NoRough_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
     # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
-    scene: MySceneCfg = MySceneCfg(num_envs=2000, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
@@ -331,12 +329,13 @@ class Prestoe_FlatWalking_EnvCfg(ManagerBasedRLEnvCfg):
 
         # Randomization
         self.events.push_robot = None
+        self.events.add_base_mass = None
         self.events.reset_robot_joints.params["position_range"] = (1.0, 1.0)
         self.events.base_external_force_torque.params["asset_cfg"].body_names = [".*torso_link"]
         self.events.reset_base.params = {
             "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
             "velocity_range": {
-                "x": (0.0, 0.005),
+                "x": (0.0, 0.0),
                 "y": (0.0, 0.0),
                 "z": (0.0, 0.0),
                 "roll": (0.0, 0.0),
@@ -349,36 +348,39 @@ class Prestoe_FlatWalking_EnvCfg(ManagerBasedRLEnvCfg):
         self.terminations.base_contact.params["sensor_cfg"].body_names = [".*torso_link"]
 
         # Rewards
-        # self.rewards.undesired_contacts = None
-        self.rewards.undesired_contacts.weight = -0.002
+        self.rewards.undesired_contacts = None
         self.rewards.flat_orientation_l2.weight = -1.0
         self.rewards.dof_torques_l2.weight = 0.0
         self.rewards.action_rate_l2.weight = -0.005
         self.rewards.dof_acc_l2.weight = -1.25e-7
 
         # Commands
-        self.commands.base_velocity.ranges.lin_vel_x = (0.0, 1.3)
+        self.commands.base_velocity.ranges.lin_vel_x = (0.0, 1.0)
         self.commands.base_velocity.ranges.lin_vel_y = (0.0, 0.0)
         self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
 
 
 @configclass
-class Prestoe_FlatWalking_EnvCfg_PLAY(Prestoe_FlatWalking_EnvCfg):
+class Prestoe_NoRough_EnvCfg_PLAY(Prestoe_NoRough_EnvCfg):
     def __post_init__(self):
+        print("play prestoe rough terrain walking")
+        print("play prestoe rough terrain walking")
+        print("play prestoe rough terrain walking")
         # post init of parent
         super().__post_init__()
 
         # make a smaller scene for play
-        self.scene.num_envs = 20
+        self.scene.num_envs = 40
         self.scene.env_spacing = 2.5
         self.episode_length_s = 20.0
         # spawn the robot randomly in the grid (instead of their terrain levels)
         self.scene.terrain.max_init_terrain_level = None
         # reduce the number of terrains to save memory
         if self.scene.terrain.terrain_generator is not None:
-            self.scene.terrain.terrain_generator.num_rows = 5
-            self.scene.terrain.terrain_generator.num_cols = 5
+            self.scene.terrain.terrain_generator.num_rows = 3
+            self.scene.terrain.terrain_generator.num_cols = 3
             self.scene.terrain.terrain_generator.curriculum = False
+
 
         self.commands.base_velocity.ranges.lin_vel_x = (0.6, 1.2)
         self.commands.base_velocity.ranges.lin_vel_y = (0.0, 0.0)

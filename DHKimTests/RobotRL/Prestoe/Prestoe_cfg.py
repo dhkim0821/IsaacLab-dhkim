@@ -26,7 +26,7 @@ Prestoe_CFG = ArticulationCfg(
             ".*_hipyaw": 0.0,
             ".*_hiproll": 0.0,
             ".*_hippitch": -0.05,  # -16 degrees
-            ".*_knee": 0.1,  # 45 degrees
+            ".*_knee": 0.15,
             ".*_anklepitch": -0.1,  # -30 degrees
             ".*_ankleroll": 0.0,  # 0 degrees
             ".*_toepitch": 0.02,  # -30 degrees
@@ -80,8 +80,8 @@ Prestoe_CFG = ArticulationCfg(
         ),
          "arms": ImplicitActuatorCfg(
             joint_names_expr=[".*_shoulderpitch", ".*_shoulderroll", ".*_shoulderyaw", ".*_elbowpitch"],
-            effort_limit=100,
-            velocity_limit=20.0,
+            effort_limit=30,
+            velocity_limit=15.0,
             stiffness={
                 ".*_shoulderpitch": 40.0,
                 ".*_shoulderroll": 40.0,
