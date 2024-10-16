@@ -66,6 +66,7 @@ import DHKimTests.RobotRL.MiniArm  # noqa: F401
 import DHKimTests.RobotRL.H1_test # noqa: F401
 import DHKimTests.RobotRL.Prestoe # noqa: F401
 import DHKimTests.RobotRL.BoxLift # noqa: F401
+import DHKimTests.RobotRL.PrestoeBox # noqa: F401
 
 from omni.isaac.lab_tasks.utils import get_checkpoint_path
 from omni.isaac.lab_tasks.utils.hydra import hydra_task_config

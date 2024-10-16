@@ -69,6 +69,7 @@ class FrankaCubeLiftEnvCfg(LiftEnvCfg):
                     disable_gravity=False,
                 ),
                 collision_props=sim_utils.CollisionPropertiesCfg(),
+                visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.9, 0.02, 0.02)),
                 mass_props=sim_utils.MassPropertiesCfg(mass=0.1),
             ),
         )

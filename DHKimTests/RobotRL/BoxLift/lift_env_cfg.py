@@ -20,6 +20,7 @@ from omni.isaac.lab.sensors.frame_transformer.frame_transformer_cfg import Frame
 from omni.isaac.lab.sim.spawners.from_files.from_files_cfg import GroundPlaneCfg, UsdFileCfg
 from omni.isaac.lab.utils import configclass
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
+from omni.isaac.lab.sim.schemas.schemas_cfg import RigidBodyPropertiesCfg
 
 # from . import mdp
 from DHKimTests.RobotRL.BoxLift import mdp
@@ -44,11 +45,26 @@ class ObjectTableSceneCfg(InteractiveSceneCfg):
     object: RigidObjectCfg | DeformableObjectCfg = MISSING
 
     # Table
-    table = AssetBaseCfg(
+    # table = AssetBaseCfg(
+    #     prim_path="{ENV_REGEX_NS}/Table",
+    #     init_state=AssetBaseCfg.InitialStateCfg(pos=[0.5, 0, 0], rot=[0.707, 0, 0, 0.707]),
+    #     spawn=UsdFileCfg(usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Mounts/SeattleLabTable/table_instanceable.usd"),
+    # )
+    table =  RigidObjectCfg(
         prim_path="{ENV_REGEX_NS}/Table",
-        init_state=AssetBaseCfg.InitialStateCfg(pos=[0.5, 0, 0], rot=[0.707, 0, 0, 0.707]),
-        spawn=UsdFileCfg(usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Mounts/SeattleLabTable/table_instanceable.usd"),
+            init_state=RigidObjectCfg.InitialStateCfg(pos=[0.5, 0, -0.04], rot=[1, 0, 0, 0]),
+            spawn = sim_utils.MeshCuboidCfg(
+            size = (1.0, 0.9, 0.08),
+            rigid_props = RigidBodyPropertiesCfg(
+                max_depenetration_velocity=5.0,
+                kinematic_enabled = True,
+            ),
+            collision_props=sim_utils.CollisionPropertiesCfg(),
+            mass_props=sim_utils.MassPropertiesCfg(mass=0.1),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.01, 0.1, 0.01)),
+        ),
     )
+
 
     # plane
     plane = AssetBaseCfg(
@@ -184,7 +200,7 @@ class CurriculumCfg:
     )
 
     joint_vel = CurrTerm(
-        func=mdp.modify_reward_weight, params={"term_name": "joint_vel", "weight": -1e-1, "num_steps": 10000}
+        func=mdp.modify_reward_weight, params={"term_name": "joint_vel", "weight": -13e-2, "num_steps": 10000}
     )
 
 

@@ -21,9 +21,6 @@ from omni.isaac.lab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 # import omni.isaac.lab_tasks.manager_based.locomotion.velocity.mdp as mdp
 import DHKimTests.RobotRL.Prestoe.Prestoe_mdp as mdp
 
-from omni.isaac.lab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
-
-
 ##
 # Pre-defined configs
 ##
