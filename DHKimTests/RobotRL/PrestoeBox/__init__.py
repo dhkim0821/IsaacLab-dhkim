@@ -6,7 +6,7 @@ from .locomanip_env_cfg import prestoe_boxlift_env_cfg
 
 gym.register(
     id="Prestoe-Lift-RL-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     kwargs={
         "env_cfg_entry_point": prestoe_boxlift_env_cfg.PrestoeLiftEnvCfg,
         "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:PrestoeLift_PPORunnerCfg",
@@ -18,7 +18,7 @@ gym.register(
 
 gym.register(
     id="Prestoe-Lift-RL-Play-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     kwargs={
         "env_cfg_entry_point": prestoe_boxlift_env_cfg.PrestoeLiftEnvCfg_PLAY,
         "rsl_rl_cfg_entry_point": f"{agents.__name__}.rsl_rl_ppo_cfg:PrestoeLift_PPORunnerCfg",

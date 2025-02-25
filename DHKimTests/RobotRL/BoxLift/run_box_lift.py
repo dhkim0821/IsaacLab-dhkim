@@ -1,5 +1,5 @@
 import argparse
-from omni.isaac.lab.app import AppLauncher
+from isaaclab.app import AppLauncher
 
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Running RL environment.")
@@ -17,7 +17,7 @@ simulation_app = app_launcher.app
 
 """Rest everything follows."""
 import torch
-from omni.isaac.lab.envs import ManagerBasedRLEnv
+from isaaclab.envs import ManagerBasedRLEnv
 # from DHKimTests.RobotRL.BoxLift.lift_env_cfg import LiftEnvCfg
 # from DHKimTests.RobotRL.BoxLift.config_arm_env.joint_pos_env_cfg import FrankaCubeLiftEnvCfg
 from DHKimTests.RobotRL.BoxLift.config_arm_env.jpos_box_env_cfg import FrankaCubeLiftEnvCfg

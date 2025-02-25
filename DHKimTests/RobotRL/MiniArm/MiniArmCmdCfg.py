@@ -1,10 +1,10 @@
 import math
 from dataclasses import MISSING
 
-from omni.isaac.lab.managers import CommandTermCfg
-from omni.isaac.lab.utils import configclass
-from omni.isaac.lab.markers import VisualizationMarkersCfg
-from omni.isaac.lab.markers.config import BLUE_ARROW_X_MARKER_CFG, FRAME_MARKER_CFG, GREEN_ARROW_X_MARKER_CFG
+from isaaclab.managers import CommandTermCfg
+from isaaclab.utils import configclass
+from isaaclab.markers import VisualizationMarkersCfg
+from isaaclab.markers.config import BLUE_ARROW_X_MARKER_CFG, FRAME_MARKER_CFG, GREEN_ARROW_X_MARKER_CFG
 
 from DHKimTests.RobotRL.MiniArm.jpos_command import UniformJPosCommand
 from DHKimTests.RobotRL.MiniArm.pose_command import PoseCommand

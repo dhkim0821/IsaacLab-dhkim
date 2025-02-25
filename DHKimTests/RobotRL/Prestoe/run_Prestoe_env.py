@@ -1,5 +1,5 @@
 import argparse
-from omni.isaac.lab.app import AppLauncher
+from isaaclab.app import AppLauncher
 
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Running the Prestoe RL environment.")
@@ -17,7 +17,7 @@ simulation_app = app_launcher.app
 
 """Rest everything follows."""
 import torch
-from omni.isaac.lab.envs import ManagerBasedRLEnv
+from isaaclab.envs import ManagerBasedRLEnv
 from DHKimTests.RobotRL.Prestoe.Prestoe_env_cfg import Prestoe_EnvCfg
 
 

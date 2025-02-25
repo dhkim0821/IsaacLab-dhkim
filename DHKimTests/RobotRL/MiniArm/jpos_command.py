@@ -4,11 +4,11 @@ import torch
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from omni.isaac.lab.assets import Articulation
-from omni.isaac.lab.managers import CommandTerm
+from isaaclab.assets import Articulation
+from isaaclab.managers import CommandTerm
 
 if TYPE_CHECKING:
-    from omni.isaac.lab.envs import ManagerBasedRLEnv
+    from isaaclab.envs import ManagerBasedRLEnv
 
     from MiniArmCmdCfg import UniformJPosCommandCfg 
 

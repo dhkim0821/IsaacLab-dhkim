@@ -9,7 +9,7 @@
 
 import argparse
 
-from omni.isaac.lab.app import AppLauncher
+from isaaclab.app import AppLauncher
 
 # local imports
 import cli_args  # isort: skip
@@ -44,10 +44,10 @@ import torch
 
 from rsl_rl.runners import OnPolicyRunner
 
-from omni.isaac.lab.envs import DirectMARLEnv, multi_agent_to_single_agent
-from omni.isaac.lab.utils.dict import print_dict
+from isaaclab.envs import DirectMARLEnv, multi_agent_to_single_agent
+from isaaclab.utils.dict import print_dict
 
-import omni.isaac.lab_tasks  # noqa: F401
+import isaaclab_tasks  # noqa: F401
 import DHKimTests.RobotRL.MiniArm  # noqa: F401
 import DHKimTests.RobotRL.H1_test # noqa: F401
 import DHKimTests.RobotRL.Prestoe # noqa: F401
@@ -55,8 +55,8 @@ import DHKimTests.RobotRL.BoxLift # noqa: F401
 import DHKimTests.RobotRL.PrestoeBox # noqa: F401
 import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
 
-from omni.isaac.lab_tasks.utils import get_checkpoint_path, parse_env_cfg
-from omni.isaac.lab_tasks.utils.wrappers.rsl_rl import (
+from isaaclab_tasks.utils import get_checkpoint_path, parse_env_cfg
+from isaaclab_rl.rsl_rl import (
     RslRlOnPolicyRunnerCfg,
     RslRlVecEnvWrapper,
     export_policy_as_jit,

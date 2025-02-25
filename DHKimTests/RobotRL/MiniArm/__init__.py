@@ -18,7 +18,7 @@ from .MiniArm_RL_EE_env_cfg import MiniArmEE_EnvCfg
 
 gym.register(
     id="MiniArm-RL-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": MiniArmEnvCfg,
@@ -31,7 +31,7 @@ gym.register(
 
 gym.register(
     id="MiniArm-RL-EE-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": MiniArmEE_EnvCfg,

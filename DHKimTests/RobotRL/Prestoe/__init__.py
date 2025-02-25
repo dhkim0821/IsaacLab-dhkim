@@ -7,7 +7,7 @@ from .Prestoe_NoRough_env_cfg import Prestoe_NoRough_EnvCfg, Prestoe_NoRough_Env
 
 gym.register(
     id="Prestoe-RL-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": Prestoe_EnvCfg,
@@ -18,7 +18,7 @@ gym.register(
 
 gym.register(
     id="Prestoe-RL-Play-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": Prestoe_EnvCfg_PLAY,
@@ -29,7 +29,7 @@ gym.register(
 
 gym.register(
     id="Prestoe-FlatWalking-RL-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": Prestoe_FlatWalking_EnvCfg,
@@ -40,7 +40,7 @@ gym.register(
 
 gym.register(
     id="Prestoe-FlatWalking-RL-Play-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": Prestoe_FlatWalking_EnvCfg_PLAY,
@@ -52,7 +52,7 @@ gym.register(
 
 gym.register(
     id="Prestoe-NoRough-RL-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": Prestoe_NoRough_EnvCfg,
@@ -63,7 +63,7 @@ gym.register(
 
 gym.register(
     id="Prestoe-NoRough-RL-Play-v0",
-    entry_point="omni.isaac.lab.envs:ManagerBasedRLEnv",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": Prestoe_NoRough_EnvCfg_PLAY,

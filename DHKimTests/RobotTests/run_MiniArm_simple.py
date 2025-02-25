@@ -1,6 +1,6 @@
 import argparse
 
-from omni.isaac.lab.app import AppLauncher
+from isaaclab.app import AppLauncher
 
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Tutorial on using the differential IK controller.")
@@ -19,14 +19,14 @@ simulation_app = app_launcher.app
 
 import torch
 
-import omni.isaac.lab.sim as sim_utils
-from omni.isaac.lab.assets import AssetBaseCfg
-from omni.isaac.lab.managers import SceneEntityCfg
-from omni.isaac.lab.markers import VisualizationMarkers
-from omni.isaac.lab.scene import InteractiveScene, InteractiveSceneCfg
-from omni.isaac.lab.utils import configclass
-from omni.isaac.lab.utils.math import subtract_frame_transforms
-from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
+import isaaclab.sim as sim_utils
+from isaaclab.assets import AssetBaseCfg
+from isaaclab.managers import SceneEntityCfg
+from isaaclab.markers import VisualizationMarkers
+from isaaclab.scene import InteractiveScene, InteractiveSceneCfg
+from isaaclab.utils import configclass
+from isaaclab.utils.math import subtract_frame_transforms
+from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR
 
 ##
 # Pre-defined configs

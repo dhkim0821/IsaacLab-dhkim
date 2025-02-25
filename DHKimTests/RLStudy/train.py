@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from omni.isaac.lab.app import AppLauncher
+from isaaclab.app import AppLauncher
 
 parser = argparse.ArgumentParser(description="Train an RL agent in Isaac Gym")
 parser.add_argument("--video", action="store_true", default=False, help="Record videos during training.")
@@ -30,7 +30,7 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.vec_env import VecNormalize
 
-from omni.isaac.lab.envs import (
+from isaaclab.envs import (
     DirectMARLEnv,
     DirectMARLEnvCfg,
     DirectRLEnvCfg,
@@ -38,10 +38,10 @@ from omni.isaac.lab.envs import (
     multi_agent_to_single_agent,
 )
 
-from omni.isaac.lab.utils.dict import print_dict
-from omni.isaac.lab.utils.io import dump_yaml, dump_pickle
-from omni.isaac.lab_tasks.utils.hydra import hydra_task_config
-from omni.isaac.lab_tasks.utils.wrappers.sb3 import Sb3VecEnvWrapper, process_sb3_cfg
+from isaaclab.utils.dict import print_dict
+from isaaclab.utils.io import dump_yaml, dump_pickle
+from isaaclab_tasks.utils.hydra import hydra_task_config
+from isaaclab_rl.sb3 import Sb3VecEnvWrapper, process_sb3_cfg
 
 
 @hydra_task_config(args_cli.task, "sb3_cfg_entry_point")

@@ -8,13 +8,13 @@ from __future__ import annotations
 import torch
 from typing import TYPE_CHECKING
 
-from omni.isaac.lab.assets import Articulation, RigidObject
-from omni.isaac.lab.managers import SceneEntityCfg
-from omni.isaac.lab.utils.math import wrap_to_pi
-from omni.isaac.lab.utils.math import combine_frame_transforms, quat_error_magnitude, quat_mul
+from isaaclab.assets import Articulation, RigidObject
+from isaaclab.managers import SceneEntityCfg
+from isaaclab.utils.math import wrap_to_pi
+from isaaclab.utils.math import combine_frame_transforms, quat_error_magnitude, quat_mul
 
 if TYPE_CHECKING:
-    from omni.isaac.lab.envs import ManagerBasedRLEnv
+    from isaaclab.envs import ManagerBasedRLEnv
 
 # define the reward function taking the target joint positions
 # as an argument and return the error between and the current joint positions

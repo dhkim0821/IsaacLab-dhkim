@@ -1,5 +1,5 @@
 import argparse
-from omni.isaac.lab.app import AppLauncher
+from isaaclab.app import AppLauncher
 
 
 # add argparse arguments
@@ -23,22 +23,22 @@ simulation_app = app_launcher.app
 import math
 import torch
 
-import omni.isaac.lab.envs.mdp as mdp
-from omni.isaac.lab.envs import ManagerBasedEnv, ManagerBasedEnvCfg
-from omni.isaac.lab.managers import EventTermCfg as EventTerm
-from omni.isaac.lab.managers import ObservationGroupCfg as ObsGroup
-from omni.isaac.lab.managers import ObservationTermCfg as ObsTerm
-from omni.isaac.lab.managers import SceneEntityCfg
-from omni.isaac.lab.utils import configclass
+import isaaclab.envs.mdp as mdp
+from isaaclab.envs import ManagerBasedEnv, ManagerBasedEnvCfg
+from isaaclab.managers import EventTermCfg as EventTerm
+from isaaclab.managers import ObservationGroupCfg as ObsGroup
+from isaaclab.managers import ObservationTermCfg as ObsTerm
+from isaaclab.managers import SceneEntityCfg
+from isaaclab.utils import configclass
 
-from omni.isaac.lab_tasks.manager_based.classic.cartpole.cartpole_env_cfg import (
+from isaaclab_tasks.manager_based.classic.cartpole.cartpole_env_cfg import (
     CartpoleSceneCfg,
 )
 
-# import omni.isaac.lab.sim as sim_utils
-# from omni.isaac.lab.assets import ArticulationCfg, AssetBaseCfg
-# from omni.isaac.lab.scene import InteractiveScene, InteractiveSceneCfg
-# from omni.isaac.lab_assets import CARTPOLE_CFG  # isort:skip
+# import isaaclab.sim as sim_utils
+# from isaaclab.assets import ArticulationCfg, AssetBaseCfg
+# from isaaclab.scene import InteractiveScene, InteractiveSceneCfg
+# from isaaclab_assets import CARTPOLE_CFG  # isort:skip
 
 
 @configclass
