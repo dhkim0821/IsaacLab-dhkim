@@ -25,9 +25,9 @@ Prestoe_LocoManip_CFG = ArticulationCfg(
         joint_pos={
             ".*_hipyaw": 0.0,
             ".*_hiproll": 0.0,
-            ".*_hippitch": -0.15,  # -16 degrees
-            ".*_knee": 0.3,
-            ".*_anklepitch": -0.15,  # -30 degrees
+            ".*_hippitch": -0.25,  # -16 degrees
+            ".*_knee": 0.5,
+            ".*_anklepitch": -0.25,  # -30 degrees
             ".*_ankleroll": 0.0,  # 0 degrees
             ".*_toepitch": 0.0,  # -30 degrees
             "torsoyaw": 0.0,
@@ -81,12 +81,12 @@ Prestoe_LocoManip_CFG = ArticulationCfg(
          "arms": ImplicitActuatorCfg(
             joint_names_expr=[".*_shoulderpitch", ".*_shoulderroll", ".*_shoulderyaw", ".*_elbowpitch"],
             effort_limit=120,
-            velocity_limit=25.0,
+            velocity_limit=15.0,
             stiffness={
-                ".*_shoulderpitch": 250.0,
-                ".*_shoulderroll": 250.0,
-                ".*_shoulderyaw": 250.0,
-                ".*_elbowpitch": 250.0,
+                ".*_shoulderpitch": 150.0,
+                ".*_shoulderroll": 150.0,
+                ".*_shoulderyaw": 150.0,
+                ".*_elbowpitch": 150.0,
             },
             damping={
                 ".*_shoulderpitch": 20.0,

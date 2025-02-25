@@ -100,6 +100,7 @@ def train(config, device):
 
     # make sure the dataset exists
     dataset_path = os.path.expanduser(config.train.data)
+    print(f">>> Loading dataset from: {dataset_path}")
     if not os.path.exists(dataset_path):
         raise FileNotFoundError(f"Dataset at provided path {dataset_path} not found!")
 
@@ -349,6 +350,9 @@ def main(args):
 
         print(f"Loading configuration for task: {args.task}")
         cfg_entry_point_file = gym.spec(args.task).kwargs.pop(cfg_entry_point_key)
+        print(f"Configuration file: {cfg_entry_point_file}")
+        print(f"Configuration entry point: {cfg_entry_point_key}")
+
         # check if entry point exists
         if cfg_entry_point_file is None:
             raise ValueError(

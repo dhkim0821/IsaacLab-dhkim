@@ -58,6 +58,8 @@ def object_ee_distance(
     # print(ee_frame.data.target_pos_w[..., 0, :].shape)
     # print(ee_frame.data.target_pos_w[..., 0, :])
     # print(ee_frame.data.target_pos_w[..., 1, :])
+    # print(f"right pos world {right_pos_w}")
+    # print(f"left pos world {left_pos_w}")
     # print("ee pos world final-------------")
     # print(ee_pos_w)
 

@@ -29,7 +29,7 @@ from omni.isaac.lab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 import DHKimTests.RobotRL.PrestoeBox.PrestoeBox_mdp as mdp
 from DHKimTests.RobotRL.PrestoeBox.Prestoe_locomanip_cfg import Prestoe_LocoManip_CFG 
 
-min_height = 0.85
+min_height = 0.95
 
 @configclass
 class ObjectTableSceneCfg(InteractiveSceneCfg):
@@ -65,9 +65,10 @@ class ObjectTableSceneCfg(InteractiveSceneCfg):
     # target object: will be populated by agent env cfg
     object = RigidObjectCfg(
         prim_path="{ENV_REGEX_NS}/Object",
-        init_state=RigidObjectCfg.InitialStateCfg(pos=[0.45, 0, 0.8], rot=[1, 0, 0, 0]),
+        # init_state=RigidObjectCfg.InitialStateCfg(pos=[0.45, 0.05, 0.85], rot=[0.966, 0, 0, 0.259]),
+        init_state=RigidObjectCfg.InitialStateCfg(pos=[0.45, 0.05, 0.85], rot=[1.0, 0, 0, 0.1]),
         spawn = sim_utils.MeshCuboidCfg(
-            size = (0.4, 0.45, 0.4),
+            size = (0.35, 0.3, 0.5),
             rigid_props = RigidBodyPropertiesCfg(
                 solver_position_iteration_count=16,
                 solver_velocity_iteration_count=1,
@@ -78,7 +79,7 @@ class ObjectTableSceneCfg(InteractiveSceneCfg):
             ),
             collision_props=sim_utils.CollisionPropertiesCfg(),
             visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.9, 0.02, 0.02)),
-            mass_props=sim_utils.MassPropertiesCfg(mass=0.3),
+            mass_props=sim_utils.MassPropertiesCfg(mass=5.5),
         ),
     )
 
@@ -117,12 +118,12 @@ class ObjectTableSceneCfg(InteractiveSceneCfg):
 @configclass
 class CommandsCfg:
     object_pose = mdp.UniformPoseCommandCfg(
-        asset_name="robot",
-        body_name="torso_link",  # will be set by agent env cfg
+        asset_name="table",
+        body_name="Table",  # will be set by agent env cfg
         resampling_time_range=(10.0, 10.0),
         debug_vis=True,
         ranges=mdp.UniformPoseCommandCfg.Ranges(
-            pos_x=(0.4, 0.6), pos_y=(-0.25, 0.25), pos_z=(0.15, 0.20), 
+            pos_x=(-0.2, -0.1), pos_y=(-0.1, 0.1), pos_z=(0.4, 0.60), 
             roll=(0.0, 0.0), pitch=(0.0, 0.0), yaw=(0.0, 0.0),
         ),
     )
@@ -173,7 +174,7 @@ class EventCfg:
         func=mdp.reset_root_state_uniform,
         mode="reset",
         params={ # from initial state
-            "pose_range": {"x": (-0.05, 0.05), "y": (-0.25, 0.25), "z": (0.0, 0.0), "yaw/": (-0.05, 0.05)},
+            "pose_range": {"x": (-0.05, 0.05), "y": (-0.25, 0.25), "z": (0.0, 0.0), "yaw": (-0.2, 0.2)},
             "velocity_range": {},
             "asset_cfg": SceneEntityCfg("object", body_names="Object"),
         },
@@ -193,29 +194,29 @@ class RewardsCfg:
 
     object_goal_tracking = RewTerm(
         func=mdp.object_goal_distance,
-        params={"std": 0.3, "minimal_height": min_height, "command_name": "object_pose"},
-        weight=16.0,
+        params={"std": 0.5, "minimal_height": min_height, "command_name": "object_pose"},
+        weight=20.0,
     )
 
     object_goal_tracking_fine_grained = RewTerm(
         func=mdp.object_goal_distance,
         params={"std": 0.05, "minimal_height": min_height, "command_name": "object_pose"},
-        weight=5.0,
+        weight=10.0,
     )
 
     # action penalty
-    action_rate = RewTerm(func=mdp.action_rate_l2, weight=-1e-4)
+    # action_rate = RewTerm(func=mdp.action_rate_l2, weight=-1e-4)
 
-    joint_vel = RewTerm(
-        func=mdp.joint_vel_l2,
-        weight=-1e-4,
-        params={"asset_cfg": SceneEntityCfg("robot")},
-    )
+    # joint_vel = RewTerm(
+    #     func=mdp.joint_vel_l2,
+    #     weight=-1e-4,
+    #     params={"asset_cfg": SceneEntityCfg("robot")},
+    # )
 
     ## From Locomotion
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
     dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
-    termination_penalty = RewTerm(func=mdp.is_terminated, weight=-100.0)
+    termination_penalty = RewTerm(func=mdp.is_terminated, weight=-150.0)
 
     # Penalize ankle joint limits
     dof_pos_limits = RewTerm(
@@ -233,7 +234,6 @@ class RewardsCfg:
         params={"asset_cfg": SceneEntityCfg("robot", joint_names="torsoyaw")}
     )
     # feet_slide = RewTerm(
-    #     func=mdp.feet_slide,
     #     weight=-0.25,
     #     params={
     #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
@@ -248,14 +248,14 @@ class TerminationsCfg:
 
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
     object_dropping = DoneTerm(
-        func=mdp.root_height_below_minimum, params={"minimum_height": 0.78, "asset_cfg": SceneEntityCfg("object")}
+        func=mdp.root_height_below_minimum, params={"minimum_height": 0.8, "asset_cfg": SceneEntityCfg("object")}
     )
     # base_contact = DoneTerm(
     #     func=mdp.illegal_contact,
     #     params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*torso_link"), "threshold": 1.0},
     # )
     falliq = DoneTerm(
-        func=mdp.root_height_below_minimum, params={"minimum_height": 0.65, "asset_cfg": SceneEntityCfg("robot")}
+        func=mdp.root_height_below_minimum, params={"minimum_height": 0.73, "asset_cfg": SceneEntityCfg("robot")}
     )
  
 
@@ -263,20 +263,20 @@ class TerminationsCfg:
 class CurriculumCfg:
     """Curriculum terms for the MDP."""
 
-    action_rate = CurrTerm(
-        func=mdp.modify_reward_weight, params={"term_name": "action_rate", "weight": -1e-1, "num_steps": 200000}
-    )
+    # action_rate = CurrTerm(
+    #     func=mdp.modify_reward_weight, params={"term_name": "action_rate", "weight": -0.001, "num_steps": 20000}
+    # )
 
-    joint_vel = CurrTerm(
-        func=mdp.modify_reward_weight, params={"term_name": "joint_vel", "weight": -1e-1, "num_steps": 200000}
-    )
+    # joint_vel = CurrTerm(
+    #     func=mdp.modify_reward_weight, params={"term_name": "joint_vel", "weight": -0.001, "num_steps": 20000}
+    # )
     reaching_object = CurrTerm(func=mdp.modify_reward_weight, 
-                               params={"term_name": "reaching_object", "weight": 5.0, "num_steps": 100000})
+                               params={"term_name": "reaching_object", "weight": 20.0, "num_steps": 5000})
     lifting_object = CurrTerm(func=mdp.modify_reward_weight, 
-                              params={"term_name": "lifting_object", "weight":55.0, "num_steps": 100000})
+                              params={"term_name": "lifting_object", "weight":35.0, "num_steps": 5000})
 
-    termination_penalty = CurrTerm(func=mdp.modify_reward_weight, 
-                              params={"term_name": "termination_penalty", "weight":-0.001, "num_steps": 100000})
+    # termination_penalty = CurrTerm(func=mdp.modify_reward_weight, 
+    #                           params={"term_name": "termination_penalty", "weight":-5.0, "num_steps": 10000})
 
 
 
@@ -305,10 +305,10 @@ class TerrainBoxEnvCfg(ManagerBasedRLEnvCfg):
         """Post initialization."""
         self.scene.robot = Prestoe_LocoManip_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         # general settings
-        self.decimation = 5 
+        self.decimation = 4 
         self.episode_length_s = 7.0
         # simulation settings
-        self.sim.dt = 0.002  # 500Hz
+        self.sim.dt = 0.005  # 200Hz
         self.sim.render_interval = self.decimation
         self.scene.contact_forces.update_period = self.sim.dt
 

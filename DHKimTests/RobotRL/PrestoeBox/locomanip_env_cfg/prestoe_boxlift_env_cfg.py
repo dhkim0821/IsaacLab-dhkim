@@ -17,7 +17,7 @@ class PrestoeLiftEnvCfg(TerrainBoxEnvCfg):
         # post init of parent
         super().__post_init__()
 
-        self.scene.num_envs = 700
+        self.scene.num_envs = 900
 
         # Listens to the required transforms
         marker_cfg = FRAME_MARKER_CFG.copy()
