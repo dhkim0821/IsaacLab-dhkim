@@ -4,7 +4,7 @@ from isaaclab.assets.articulation import ArticulationCfg
 
 PRESTOEBIPED_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
-        usd_path=f"/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotTests/prestoebiped.usd",
+        usd_path=f"/home/simon/Repositories/IsaacLab-dhkim/DHKimTests/RobotTests/prestoebiped.usd",
         activate_contact_sensors=True,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=False,
