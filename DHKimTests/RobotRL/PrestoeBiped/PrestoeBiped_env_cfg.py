@@ -213,12 +213,33 @@ class EventCfg:
 class PrestoeRewards:
     """Reward terms for the MDP."""
     ## Velocity Environment's reward
+    track_lin_vel_xy_exp = RewTerm(
+        func=mdp.track_lin_vel_xy_exp,
+        weight=1.0,
+        params={"command_name": "base_velocity", "std": 0.25},
+    )
+    track_ang_vel_z_exp = RewTerm(
+        func=mdp.track_ang_vel_z_exp, 
+        weight=0.5, 
+        params={"command_name": "base_velocity", "std": 0.25}
+    )
+
     # -- penalties
-    # lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-2.0)
-    ang_vel_xy_l2 = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
+    lin_vel_z_l2   = RewTerm(func=mdp.lin_vel_z_l2, weight=-2.0)
+    ang_vel_xy_l2  = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
-    dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
+    dof_acc_l2     = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-8)
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
+    feet_air_time = RewTerm(
+        func=mdp.feet_air_time_positive_biped,
+        weight=2.0,
+        params={
+            "command_name": "base_velocity",
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
+            "threshold": 0.4,
+        },
+    )
+    
     undesired_contacts = RewTerm(
         func=mdp.undesired_contacts,
         weight=-1.0,
@@ -227,29 +248,11 @@ class PrestoeRewards:
     )
     # -- optional penalties
     flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=0.0)
-    dof_pos_limits = RewTerm(func=mdp.joint_pos_limits, weight=0.0)
-
     ## Prestoe specific
-    termination_penalty = RewTerm(func=mdp.is_terminated, weight=-200.0)
+    termination_penalty = RewTerm(func=mdp.is_terminated, weight=-2.0)
     # lin_vel_z_l2 = None
-    track_lin_vel_xy_exp = RewTerm(
-        func=mdp.track_lin_vel_xy_yaw_frame_exp,
-        weight=1.0,
-        params={"command_name": "base_velocity", "std": 0.5},
-    )
-    track_ang_vel_z_exp = RewTerm(
-        func=mdp.track_ang_vel_z_world_exp, weight=1.0, params={
-            "command_name": "base_velocity", "std": 0.5}
-    )
-    feet_air_time = RewTerm(
-        func=mdp.feet_air_time_positive_biped,
-        weight=0.25,
-        params={
-            "command_name": "base_velocity",
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
-            "threshold": 0.4,
-        },
-    )
+
+
     feet_slide = RewTerm(
         func=mdp.feet_slide,
         weight=-0.25,
@@ -301,9 +304,9 @@ class CurriculumCfg:
 @configclass
 class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
-    # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
     # scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
-    scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
+    # scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
@@ -371,14 +374,12 @@ class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
 
         # Rewards
         self.rewards.undesired_contacts = None
-        self.rewards.flat_orientation_l2.weight = -1.0
-        self.rewards.dof_torques_l2.weight = 0.0
-        self.rewards.action_rate_l2.weight = -0.005
-        self.rewards.dof_acc_l2.weight = -1.25e-7
-
+        self.rewards.flat_orientation_l2.weight = 0
+        self.rewards.action_rate_l2.weight = -0.001
+        # self.rewards.dof_acc_l2.weight = 0
         # Commands
-        self.commands.base_velocity.ranges.lin_vel_x = (0.0, 1.0)
-        self.commands.base_velocity.ranges.lin_vel_y = (0.0, 0.0)
+        self.commands.base_velocity.ranges.lin_vel_x = (-1.0, 1.0)
+        self.commands.base_velocity.ranges.lin_vel_y = (-1.0, 1.0)
         self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
 
 
@@ -403,7 +404,7 @@ class PrestoeBiped_EnvCfg_PLAY(PrestoeBiped_EnvCfg):
             self.scene.terrain.terrain_generator.curriculum = False
 
 
-        self.commands.base_velocity.ranges.lin_vel_x = (0.6, 1.2)
+        self.commands.base_velocity.ranges.lin_vel_x = (0.6, 1.0)
         self.commands.base_velocity.ranges.lin_vel_y = (0.0, 0.0)
         self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
         self.commands.base_velocity.ranges.heading = (-0.2, 0.2)
