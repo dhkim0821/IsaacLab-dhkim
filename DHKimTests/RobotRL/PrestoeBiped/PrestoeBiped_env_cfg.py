@@ -158,8 +158,8 @@ class EventCfg:
         func=mdp.randomize_rigid_body_mass,
         mode="startup",
         params={
-            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
-            "mass_distribution_params": (-5.0, 5.0),
+            "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
+            "mass_distribution_params": (-1, 1),
             "operation": "add",
         },
     )
@@ -169,7 +169,7 @@ class EventCfg:
         func=mdp.apply_external_force_torque,
         mode="reset",
         params={
-            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
+            "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
             "force_range": (0.0, 0.0),
             "torque_range": (-0.0, 0.0),
         },
@@ -215,7 +215,7 @@ class PrestoeRewards:
     ## Velocity Environment's reward
     track_lin_vel_xy_exp = RewTerm(
         func=mdp.track_lin_vel_xy_exp,
-        weight=1.0,
+        weight=2.0,
         params={"command_name": "base_velocity", "std": 0.25},
     )
     track_ang_vel_z_exp = RewTerm(
@@ -352,8 +352,8 @@ class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
             self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/torso_link"
 
         # Randomization
-        self.events.push_robot = None
-        self.events.add_base_mass = None
+        # self.events.push_robot = None
+        # self.events.add_base_mass = None
         self.events.reset_robot_joints.params["position_range"] = (1.0, 1.0)
         self.events.base_external_force_torque.params["asset_cfg"].body_names = [".*torso_link"]
         self.events.reset_base.params = {
