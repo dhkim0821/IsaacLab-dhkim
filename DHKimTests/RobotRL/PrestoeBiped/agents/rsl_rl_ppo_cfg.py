@@ -14,7 +14,7 @@ from isaaclab_rl.rsl_rl import (
 @configclass
 class PrestoeBiped_PPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
-    max_iterations = 6001
+    max_iterations = 20000
     save_interval = 200
     experiment_name = "prestoebiped_test"
     empirical_normalization = False

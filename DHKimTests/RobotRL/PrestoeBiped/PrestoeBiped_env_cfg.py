@@ -21,7 +21,8 @@ from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 # import isaaclab_tasks.manager_based.locomotion.velocity.mdp as mdp
 import DHKimTests.RobotRL.PrestoeBiped.PrestoeBiped_mdp as mdp
 
-from isaaclab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
+# from isaaclab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
+from DHKimTests.RobotRL.PrestoeBiped.config.rough_terrain import GENTLE_ROUGH_TERRAINS_CFG, ROUGH_TERRAINS_CFG
 
 
 
@@ -247,7 +248,7 @@ class PrestoeRewards:
                 SceneEntityCfg("contact_forces", body_names=".*thigh_link"), "threshold": 1.0},
     )
     # -- optional penalties
-    flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=0.0)
+    flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=-1.0)
     ## Prestoe specific
     termination_penalty = RewTerm(func=mdp.is_terminated, weight=-2.0)
     # lin_vel_z_l2 = None
@@ -257,8 +258,8 @@ class PrestoeRewards:
         func=mdp.feet_slide,
         weight=-0.25,
         params={
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
-            "asset_cfg": SceneEntityCfg("robot", body_names=".*foot_link"),
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=[".*foot_link", ".*toe_link"]),
+            "asset_cfg": SceneEntityCfg("robot", body_names=[".*foot_link", ".*toe_link"]),
         },
     )
     # Penalize ankle joint limits
@@ -273,8 +274,20 @@ class PrestoeRewards:
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*_hipyaw", ".*_hiproll"])},
     )
     joint_deviation_torso = RewTerm(
-        func=mdp.joint_deviation_l1, weight=-0.01, 
+        func=mdp.joint_deviation_l1, weight=-0.2, 
         params={"asset_cfg": SceneEntityCfg("robot", joint_names="torsoyaw")}
+    )
+    joint_deviation_ankle_roll = RewTerm(
+        func=mdp.joint_deviation_l1, weight=-0.2, 
+        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_ankleroll")}
+    )
+    joint_deviation_ankle_pitch = RewTerm(
+        func=mdp.joint_deviation_l1, weight=-0.1, 
+        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_anklepitch")}
+    )
+    joint_deviation_toe_pitch = RewTerm(
+        func=mdp.joint_deviation_l1, weight=-0.1, 
+        params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_toepitch")}
     )
 
 
@@ -291,6 +304,7 @@ class TerminationsCfg:
         func=mdp.illegal_contact,
         params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*hippitch_link"), "threshold": 1.0},
     )
+    torso_height = DoneTerm(func=mdp.root_height_below_minimum, params={"minimum_height": 0.8})
 
 
 
@@ -304,9 +318,9 @@ class CurriculumCfg:
 @configclass
 class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
-    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
     # scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
-    # scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
@@ -374,12 +388,11 @@ class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
 
         # Rewards
         self.rewards.undesired_contacts = None
-        self.rewards.flat_orientation_l2.weight = 0
         self.rewards.action_rate_l2.weight = -0.001
         # self.rewards.dof_acc_l2.weight = 0
         # Commands
-        self.commands.base_velocity.ranges.lin_vel_x = (-1.0, 1.0)
-        self.commands.base_velocity.ranges.lin_vel_y = (-1.0, 1.0)
+        self.commands.base_velocity.ranges.lin_vel_x = (-0.5, 1.5)
+        self.commands.base_velocity.ranges.lin_vel_y = (-0.5, 0.5)
         self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
 
 

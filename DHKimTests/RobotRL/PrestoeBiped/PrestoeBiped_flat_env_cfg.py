@@ -7,7 +7,6 @@
 from isaaclab.utils import configclass
 
 from .PrestoeBiped_env_cfg import PrestoeBiped_EnvCfg
-from DHKimTests.RobotRL.PrestoeBiped.config.rough_terrain import GENTLE_ROUGH_TERRAINS_CFG, ROUGH_TERRAINS_CFG
 
 @configclass
 class PrestoeBiped_FlatEnvCfg(PrestoeBiped_EnvCfg):
@@ -16,13 +15,12 @@ class PrestoeBiped_FlatEnvCfg(PrestoeBiped_EnvCfg):
         super().__post_init__()
 
         # change terrain to flat
-        self.scene.terrain.terrain_generator = GENTLE_ROUGH_TERRAINS_CFG
-        self.scene.terrain.terrain_generator.curriculum = False
+        # self.scene.terrain.terrain_generator.curriculum = False
         # no height scan
         self.scene.height_scanner = None
         self.observations.policy.height_scan = None
 
-        self.commands.base_velocity.ranges.lin_vel_x = (-1.0, 1.0)
+        self.commands.base_velocity.ranges.lin_vel_x = (-0.5, 1.5)
         self.commands.base_velocity.ranges.lin_vel_y = (-0.5, 0.5)
         self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
 
