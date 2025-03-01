@@ -39,7 +39,7 @@ class MySceneCfg(InteractiveSceneCfg):
     terrain = TerrainImporterCfg(
         prim_path="/World/ground",
         terrain_type="generator",
-        terrain_generator=ROUGH_TERRAINS_CFG,
+        terrain_generator=GENTLE_ROUGH_TERRAINS_CFG,
         max_init_terrain_level=5,
         collision_group=-1,
         physics_material=sim_utils.RigidBodyMaterialCfg(
@@ -282,7 +282,7 @@ class PrestoeRewards:
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_ankleroll")}
     )
     joint_deviation_ankle_pitch = RewTerm(
-        func=mdp.joint_deviation_l1, weight=-0.1, 
+        func=mdp.joint_deviation_l1, weight=-0.02, 
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=".*_anklepitch")}
     )
     joint_deviation_toe_pitch = RewTerm(
@@ -318,9 +318,9 @@ class CurriculumCfg:
 @configclass
 class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
-    # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
     # scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
-    scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
+    # scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()

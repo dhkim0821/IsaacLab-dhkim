@@ -32,16 +32,13 @@ GENTLE_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
         #     holes=False,
         # ),
         "boxes": terrain_gen.MeshRandomGridTerrainCfg(
-            proportion=0.2, grid_width=0.55, grid_height_range=(0.01, 0.04), platform_width=3.0
+            proportion=0.2, grid_width=0.55, grid_height_range=(0.01, 0.03), platform_width=3.0
         ),
         "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
-            proportion=0.2, noise_range=(0.02, 0.06), noise_step=0.02, border_width=0.35
+            proportion=0.6, noise_range=(0.02, 0.06), noise_step=0.02, border_width=0.35
         ),
-        "hf_pyramid_slope": terrain_gen.HfPyramidSlopedTerrainCfg(
-            proportion=0.3, slope_range=(0.0, 0.06), platform_width=2.5, border_width=0.25
-        ),
-        "hf_pyramid_slope_inv": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
-            proportion=0.3, slope_range=(0.0, 0.06), platform_width=2.0, border_width=0.25
+        "wave_terrain": terrain_gen.HfWaveTerrainCfg(
+            proportion=0.2, amplitude_range=(0.0, 0.15), num_waves=4, border_width=0.25
         ),
     },
 )
