@@ -2,10 +2,12 @@ import isaaclab.sim as sim_utils
 from isaaclab.actuators import ActuatorNetMLPCfg, DCMotorCfg, ImplicitActuatorCfg
 from isaaclab.assets.articulation import ArticulationCfg
 # from isaaclab.utils.assets import ISAACLAB_NUCLEUS_DIR
-
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+usd_relative_path = os.path.join(BASE_DIR, "../../RobotTests", "prestoebiped_minimal.usd")
 PrestoeBiped_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
-        usd_path=f"/home/simon/Repositories/IsaacLab-dhkim/DHKimTests/RobotTests/prestoebiped_minimal.usd",
+        usd_path=usd_relative_path,
         activate_contact_sensors=True,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=False,
@@ -80,7 +82,7 @@ PrestoeBiped_CFG = ArticulationCfg(
 
 
 PrestoeBiped_MINIMAL_CFG = PrestoeBiped_CFG.copy()
-PrestoeBiped_MINIMAL_CFG.spawn.usd_path = f"/home/simon/Repositories/IsaacLab-dhkim/DHKimTests/RobotTests/prestoebiped_minimal.usd"
+PrestoeBiped_MINIMAL_CFG.spawn.usd_path = usd_relative_path
 """Configuration for the PrestoeBiped robot with fewer collision meshes.
 This configuration removes most collision meshes to speed up simulation.
 """

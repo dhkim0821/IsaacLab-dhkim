@@ -22,7 +22,6 @@ def phase_obs(
 ) -> torch.Tensor:
     """getting the phase"""
     robot: RigidObject = env.scene[robot_cfg.name]
-    breakpoint()
     cycle = 0.8
     if hasattr(env, "episode_length_buf"):
         phase = env.episode_length_buf * env.step_dt % cycle / cycle
