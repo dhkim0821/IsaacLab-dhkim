@@ -129,6 +129,7 @@ class ObservationsCfg:
             noise=Unoise(n_min=-0.1, n_max=0.1),
             clip=(-1.0, 1.0),
         )
+        phase_obs = ObsTerm(func=mdp.phase_obs)
 
         def __post_init__(self):
             self.enable_corruption = True
@@ -318,9 +319,9 @@ class CurriculumCfg:
 @configclass
 class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
-    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
     # scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
-    # scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
@@ -389,6 +390,7 @@ class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
         # Rewards
         self.rewards.undesired_contacts = None
         self.rewards.action_rate_l2.weight = -0.001
+        # self.rewards.cycle = 0.8
         # self.rewards.dof_acc_l2.weight = 0
         # Commands
         self.commands.base_velocity.ranges.lin_vel_x = (-0.5, 1.5)
