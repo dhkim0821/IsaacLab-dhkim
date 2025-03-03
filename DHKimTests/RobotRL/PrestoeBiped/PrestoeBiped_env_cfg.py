@@ -262,14 +262,22 @@ class PrestoeRewards:
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
     feet_air_time = RewTerm(
         func=mdp.feet_air_time_positive_biped,
-        weight=2.0,
+        weight=0,
         params={
             "command_name": "base_velocity",
             "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
             "threshold": 0.4,
         },
     )
-    
+    feet_contact = RewTerm(
+        func=mdp.feet_contact,
+        weight=2.0,
+        params={
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link")
+        },
+    )
+
+
     undesired_contacts = RewTerm(
         func=mdp.undesired_contacts,
         weight=-1.0,
@@ -347,9 +355,9 @@ class CurriculumCfg:
 @configclass
 class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
-    # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
     # scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
-    scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
+    # scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()

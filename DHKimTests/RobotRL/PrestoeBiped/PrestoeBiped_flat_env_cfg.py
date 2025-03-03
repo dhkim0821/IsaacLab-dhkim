@@ -21,7 +21,7 @@ class PrestoeBiped_FlatEnvCfg(PrestoeBiped_EnvCfg):
         self.observations.policy.height_scan = None
         self.observations.critic.height_scan = None
 
-        self.commands.base_velocity.ranges.lin_vel_x = (-0.5, 1.5)
+        self.commands.base_velocity.ranges.lin_vel_x = (-0.5, 1.0)
         self.commands.base_velocity.ranges.lin_vel_y = (-0.5, 0.5)
         self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
 
