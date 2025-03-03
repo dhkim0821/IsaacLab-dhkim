@@ -108,7 +108,6 @@ def feet_contact(env, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
 
     # compute the reward
     toe_ids = env.scene['contact_forces'].find_bodies(["L_toe_link", "R_toe_link"])[0]
-    breakpoint()
     for i in range(2):
         is_stance_toe = toe_phase[:, i] < 0.55
         contact_toe = contact_sensor.data.net_forces_w[:, toe_ids[i], 2] > 1
