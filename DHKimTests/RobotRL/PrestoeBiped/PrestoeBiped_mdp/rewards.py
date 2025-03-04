@@ -86,7 +86,7 @@ def feet_air_time_positive_biped(env, command_name: str, threshold: float, senso
     reward *= torch.norm(env.command_manager.get_command(command_name)[:, :2], dim=1) > 0.1
     return reward
 
-def feet_contact(env, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
+def feet_contact(env, command_name: str, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
     """Reward contact matching with the phase
     """
 
@@ -117,6 +117,7 @@ def feet_contact(env, sensor_cfg: SceneEntityCfg) -> torch.Tensor:
 
         res += ~(contact_toe ^ is_stance_toe) 
         res += ~(contact_heel ^ is_stance_heel)
+    res *= torch.norm(env.command_manager.get_command(command_name)[:, :2], dim=1) > 0.1
     return res
 
 

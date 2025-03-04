@@ -259,7 +259,7 @@ class PrestoeRewards:
     ang_vel_xy_l2  = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
     dof_acc_l2     = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-8)
-    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
+    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.05)
     feet_air_time = RewTerm(
         func=mdp.feet_air_time_positive_biped,
         weight=0,
@@ -271,8 +271,9 @@ class PrestoeRewards:
     )
     feet_contact = RewTerm(
         func=mdp.feet_contact,
-        weight=2.0,
+        weight=0.5,
         params={
+            "command_name": "base_velocity",
             "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link")
         },
     )
@@ -282,8 +283,9 @@ class PrestoeRewards:
         func=mdp.undesired_contacts,
         weight=-1.0,
         params={"sensor_cfg": 
-                SceneEntityCfg("contact_forces", body_names=".*thigh_link"), "threshold": 1.0},
+                SceneEntityCfg("contact_forces", body_names=[".*hippitch_link", ".*shank_link"]), "threshold": 1.0},
     )
+
     # -- optional penalties
     flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=-1.0)
     ## Prestoe specific
@@ -341,6 +343,10 @@ class TerminationsCfg:
         func=mdp.illegal_contact,
         params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*hippitch_link"), "threshold": 1.0},
     )
+    shank_contact = DoneTerm(
+        func=mdp.illegal_contact,
+        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*shank_link"), "threshold": 1.0},
+    )
     torso_height = DoneTerm(func=mdp.root_height_below_minimum, params={"minimum_height": 0.8})
 
 
@@ -355,9 +361,9 @@ class CurriculumCfg:
 @configclass
 class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
     # Scene settings
-    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    # scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
     # scene: MySceneCfg = MySceneCfg(num_envs=2048, env_spacing=2.5)
-    # scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
+    scene: MySceneCfg = MySceneCfg(num_envs=200, env_spacing=2.5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
@@ -422,12 +428,13 @@ class PrestoeBiped_EnvCfg(ManagerBasedRLEnvCfg):
         # Terminations
         self.terminations.base_contact.params["sensor_cfg"].body_names = [".*torso_link"]
         self.terminations.thigh_contact.params["sensor_cfg"].body_names = [".*hippitch_link"]
+        self.terminations.shank_contact.params["sensor_cfg"].body_names = [".*shank_link"]
 
         # Rewards
-        self.rewards.undesired_contacts = None
-        self.rewards.action_rate_l2.weight = -0.001
+        # self.rewards.undesired_contacts = None
         # self.rewards.cycle = 0.8
         # self.rewards.dof_acc_l2.weight = 0
+        # self.rewards.action_rate_l2.weight = -0.001
         # Commands
         self.commands.base_velocity.ranges.lin_vel_x = (-0.5, 1.5)
         self.commands.base_velocity.ranges.lin_vel_y = (-0.5, 0.5)
