@@ -313,7 +313,7 @@ class PrestoeRewards:
         params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*_hipyaw", ".*_hiproll"])},
     )
     joint_deviation_torso = RewTerm(
-        func=mdp.joint_deviation_l1, weight=-0.2, 
+        func=mdp.joint_deviation_l1, weight=-0.4, 
         params={"asset_cfg": SceneEntityCfg("robot", joint_names="torsoyaw")}
     )
     joint_deviation_ankle_roll = RewTerm(

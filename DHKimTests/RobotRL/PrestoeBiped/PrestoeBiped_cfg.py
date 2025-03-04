@@ -54,6 +54,7 @@ PrestoeBiped_CFG = ArticulationCfg(
                 ".*_hippitch": 5.0,
                 "torsoyaw": 5.0,
             },
+            armature = 0.0049167
         ),
         "legs": ImplicitActuatorCfg(
             joint_names_expr=[".*_knee"],
@@ -61,6 +62,7 @@ PrestoeBiped_CFG = ArticulationCfg(
             velocity_limit=50.0,
             stiffness={ ".*_knee": 200.0 },
             damping={ ".*_knee": 5.0 },
+            armature = 0.09712
         ),
         "feet": ImplicitActuatorCfg(
             joint_names_expr=[".*_anklepitch"],
@@ -68,6 +70,7 @@ PrestoeBiped_CFG = ArticulationCfg(
             velocity_limit=30.0,
             stiffness={".*_anklepitch": 20.0 },
             damping={".*_anklepitch": 4.0},
+            armature = 0.01728094176
         ),
         "toe": ImplicitActuatorCfg(
             joint_names_expr=[".*_ankleroll", ".*_toepitch"],
@@ -75,6 +78,7 @@ PrestoeBiped_CFG = ArticulationCfg(
             velocity_limit=20.0,
             stiffness={".*_ankleroll": 20.0, ".*_toepitch": 20.0},
             damping={".*_ankleroll": 4.0, ".*_toepitch": 4.0},
+            armature = 0.01728094176
         ),
     },
 )
