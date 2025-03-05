@@ -257,9 +257,10 @@ class PrestoeRewards:
     # -- penalties
     lin_vel_z_l2   = RewTerm(func=mdp.lin_vel_z_l2, weight=-2.0)
     ang_vel_xy_l2  = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
-    dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
-    dof_acc_l2     = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-8)
-    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.05)
+    # dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
+    # dof_acc_l2     = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-8)
+    # action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.05)
+    energy_penalty = RewTerm(func=mdp.energy_penalty, weight=-1.0e-5)
     feet_air_time = RewTerm(
         func=mdp.feet_air_time_positive_biped,
         weight=0,
