@@ -260,16 +260,16 @@ class PrestoeRewards:
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
     dof_acc_l2     = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-8)
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.05)
-    energy_penalty = RewTerm(func=mdp.energy_penalty, weight=-2.0e-6)
-    feet_air_time = RewTerm(
-        func=mdp.feet_air_time_positive_biped,
-        weight=0,
-        params={
-            "command_name": "base_velocity",
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
-            "threshold": 0.4,
-        },
-    )
+    # energy_penalty = RewTerm(func=mdp.energy_penalty, weight=-2.0e-6)
+    # feet_air_time = RewTerm(
+    #     func=mdp.feet_air_time_positive_biped,
+    #     weight=0,
+    #     params={
+    #         "command_name": "base_velocity",
+    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot_link"),
+    #         "threshold": 0.4,
+    #     },
+    # )
     feet_contact = RewTerm(
         func=mdp.feet_contact,
         weight=0.5,
