@@ -68,6 +68,7 @@ import DHKimTests.RobotRL.Prestoe # noqa: F401
 import DHKimTests.RobotRL.BoxLift # noqa: F401
 import DHKimTests.RobotRL.PrestoeBox # noqa: F401
 import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
+import DHKimTests.RobotRL.Vivo # noqa: F401
 
 from isaaclab_tasks.utils import get_checkpoint_path
 from isaaclab_tasks.utils.hydra import hydra_task_config

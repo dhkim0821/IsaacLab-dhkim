@@ -10,7 +10,7 @@ from isaaclab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import Lo
 ##
 # Pre-defined configs
 ##
-from Vivo_Assets.vivo import VIVO_CFG # isort: skip
+from DHKimTests.RobotRL.Vivo.Vivo_Assets.vivo import VIVO_CFG # isort: skip
 
 
 
