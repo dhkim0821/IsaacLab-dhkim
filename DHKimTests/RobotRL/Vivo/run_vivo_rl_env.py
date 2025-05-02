@@ -40,7 +40,7 @@ from isaaclab.envs import ManagerBasedRLEnv
 
 # Import the fixed configuration
 #from isaaclab_tasks.manager_based.locomotion.velocity.config.vivo.rough_env_cfg import VivoRoughEnvCfg
-from Vivo_Enviornment.rough_env_cfg import VivoRoughEnvCfg
+from rough_env_cfg import VivoRoughEnvCfg
 
 def main():
     """Main function."""
