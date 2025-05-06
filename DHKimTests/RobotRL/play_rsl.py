@@ -48,12 +48,14 @@ from isaaclab.envs import DirectMARLEnv, multi_agent_to_single_agent
 from isaaclab.utils.dict import print_dict
 
 import isaaclab_tasks  # noqa: F401
-import DHKimTests.RobotRL.MiniArm  # noqa: F401
-import DHKimTests.RobotRL.H1_test # noqa: F401
-import DHKimTests.RobotRL.Prestoe # noqa: F401
-import DHKimTests.RobotRL.BoxLift # noqa: F401
-import DHKimTests.RobotRL.PrestoeBox # noqa: F401
-import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
+#import DHKimTests.RobotRL.MiniArm  # noqa: F401
+#import DHKimTests.RobotRL.H1_test # noqa: F401
+#import DHKimTests.RobotRL.Prestoe # noqa: F401
+#import DHKimTests.RobotRL.BoxLift # noqa: F401
+#import DHKimTests.RobotRL.PrestoeBox # noqa: F401
+#import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
+import Vivo
+
 
 from isaaclab_tasks.utils import get_checkpoint_path, parse_env_cfg
 from isaaclab_rl.rsl_rl import (
