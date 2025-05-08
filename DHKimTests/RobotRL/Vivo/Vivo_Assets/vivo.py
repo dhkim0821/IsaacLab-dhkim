@@ -10,7 +10,7 @@ VIVO_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
         # usd_path=f"/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/DHKimTests/RobotRL/Vivo/Vivo_Assets/v1/robot.usd", currently is still hardcoded in the code
         #usd_path=f"/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/DHKimTests/RobotRL/Vivo/Vivo_Assets/v1/robot.usd",
-        usd_path=f"D:\CodeProjects\Isaac\IsaacLab-dhkim\DHKimTests\RobotRL\Vivo\Vivo_Assets\v1\robot.usd",
+        usd_path=f"D:\CodeProjects\Isaac\IsaacLab-dhkim\DHKimTests\RobotRL\Vivo\Vivo_Assets/v1/robot.usd",
 
         activate_contact_sensors=True,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
@@ -32,22 +32,22 @@ VIVO_CFG = ArticulationCfg(
             # Front left leg joints
             ".*fl_roll": 0.0,     # Hip roll (abduction/adduction)
             ".*fl_pitch": -0.61,    # Hip pitch (flexion/extension) 
-            ".*fl_fe": 0.35,   # Knee (flexion/extension)
+            ".*fl_fe": 1,   # Knee (flexion/extension)
             
             # Front right leg joints
             ".*fr_roll": 0.0,      # Hip roll
             ".*fr_pitch": -0.61,    # Hip pitch
-            ".*fr_fe": 0.35,      # Knee (note this uses 'fe' instead of shank)
+            ".*fr_fe": 1,      # Knee (note this uses 'fe' instead of shank)
             
             # Back left leg joints
             ".*bl_roll": 0.0,     # Hip roll
             ".*bl_pitch": -0.61,   # Hip pitch
-            ".*bl_fe": 0.35,       # Knee
+            ".*bl_fe": 1,       # Knee
             
             # Back right leg joints
             ".*br_roll": 0.0,     # Hip roll
             ".*br_pitch": -0.61,   # Hip pitch
-            ".*br_fe": 0.35     # Knee (using shank naming)
+            ".*br_fe": 1     # Knee (using shank naming)
         },
         joint_vel={".*": 0.0},
     ),

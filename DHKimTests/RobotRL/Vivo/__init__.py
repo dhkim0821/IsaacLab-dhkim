@@ -15,7 +15,7 @@ gym.register(
 )
 
 gym.register(
-    id="PrestoeBiped-RL-Play-v0",
+    id="Vivo-RL-Play-v0",
     entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
