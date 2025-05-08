@@ -2,7 +2,7 @@ import isaaclab.sim as sim_utils
 from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets import ArticulationCfg
 
-USD_PATH = "/home/isaac/Documents/Github/IsaacLab-dhkim/scripts/prestoe/prestoestuff/prestoe_CC2.usd"
+USD_PATH = "/home/isaac/Documents/Github/IsaacLab-dhkim/scripts/prestoe/newprestoe/prestoeCC2/prestoe_CC2.usd"
 
 PRESTOE_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
