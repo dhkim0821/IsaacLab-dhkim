@@ -65,68 +65,69 @@ class ObserationCfg:
 @configclass
 class EventCfg:
     # I took the code form PrestoeBiped_env_cfg.py
-    add_base_mass = EventTerm(
-        func=mdp.randomize_rigid_body_mass,
-        mode="startup",
-        params={
-            "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
-            "mass_distribution_params": (-1, 1),
-            "operation": "add",
-        },
-    )
+    # add_base_mass = EventTerm(
+    #     func=mdp.randomize_rigid_body_mass,
+    #     mode="startup",
+    #     params={
+    #         "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
+    #         "mass_distribution_params": (-1, 1),
+    #         "operation": "add",
+    #     },
+    # )
 
-    base_external_force_torque = EventTerm(
-        func=mdp.apply_external_force_torque,
-        mode="reset",
-        params={
-            "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
-            "force_range": (0.0, 0.0),
-            "torque_range": (-0.0, 0.0),
-        },
-    )
+    # base_external_force_torque = EventTerm(
+    #     func=mdp.apply_external_force_torque,
+    #     mode="reset",
+    #     params={
+    #         "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
+    #         "force_range": (0.0, 0.0),
+    #         "torque_range": (-0.0, 0.0),
+    #     },
+    # )
+
     # reset_robot_position = EventTerm(
     #     func=mdp.reset_joints_by_offset,
     #     mode="reset",
     #     params={
     #         "asset_cfg": SceneEntityCfg("robot", joint_names=[".*"]),
-    #         "position_range": (-1.0, 1.0),
+    #         "position_range": (-0.1, 0.1),
     #         "velocity_range": (-0.5, 0.5),
     #     },
     # )
 
+    # reset_base = EventTerm(
+    #     func=mdp.reset_root_state_uniform,
+    #     mode="reset",
+    #     params={
+    #         "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
+    #         "velocity_range": {
+    #             "x": (-0.5, 0.5),
+    #             "y": (-0.5, 0.5),
+    #             "z": (0, 0.5),
+    #             "roll": (-0.5, 0.5),
+    #             "pitch": (-0.5, 0.5),
+    #             "yaw": (-0.5, 0.5),
+    #         },
+    #     },
+    # )
 
-    reset_base = EventTerm(
-        func=mdp.reset_root_state_uniform,
-        mode="reset",
-        params={
-            "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
-            "velocity_range": {
-                "x": (-0.5, 0.5),
-                "y": (-0.5, 0.5),
-                "z": (-0.5, 0.5),
-                "roll": (-0.5, 0.5),
-                "pitch": (-0.5, 0.5),
-                "yaw": (-0.5, 0.5),
-            },
-        },
-    )
-
-    reset_robot_joints = EventTerm(
-        func=mdp.reset_joints_by_scale,
-        mode="reset",
-        params={
-            "position_range": (0.5, 1.5),
-            "velocity_range": (0.0, 0.0),
-        },
-    )
+    # reset_robot_joints = EventTerm(
+    #     func=mdp.reset_joints_by_scale,
+    #     mode="reset",
+    #     params={
+    #         "position_range": (0.0, 0.5),
+    #         "velocity_range": (0.0, 0.0),
+    #     },
+    # )
 
     # interval
-    push_robot = EventTerm(
-        func=mdp.push_by_setting_velocity,
-        mode="interval",
-        interval_range_s=(10.0, 15.0),
-        params={"velocity_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5)}},
-    )
+    # push_robot = EventTerm(
+    #     func=mdp.push_by_setting_velocity,
+    #     mode="interval",
+    #     interval_range_s=(10.0, 15.0),
+    #     params={"velocity_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5)}},
+    # )
+    pass
 
 @configclass
 class RewardsCfg:
@@ -239,8 +240,8 @@ class PrestoeEnvCfg(ManagerBasedRLEnvCfg):
     def __post_init__(self) -> None:
         """Post initialization."""
         # general settings
-        self.decimation = 4
-        self.episode_length_s = 20
+        self.decimation = 2
+        self.episode_length_s = 5
         # viewer settings
         self.viewer.eye = (8.0, 0.0, 5.0)
         # simulation settings

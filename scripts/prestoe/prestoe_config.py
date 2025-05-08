@@ -2,7 +2,7 @@ import isaaclab.sim as sim_utils
 from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets import ArticulationCfg
 
-USD_PATH = "/home/isaac/Documents/Github/IsaacLab-dhkim/scripts/prestoe/prestoe_CC2 (final?)/prestoe_CC2.usd"
+USD_PATH = "/home/isaac/Documents/Github/IsaacLab-dhkim/scripts/prestoe/prestoestuff/prestoe_CC2.usd"
 
 PRESTOE_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
@@ -50,7 +50,7 @@ PRESTOE_CFG = ArticulationCfg(
             velocity_limit=100.0,
         ),
         "L_AL_pulley_pitch_acc" : ImplicitActuatorCfg(
-            joint_names_expr= ["R_AL_pulley_pitch"],
+            joint_names_expr= ["L_AL_pulley_pitch"],
             stiffness=0,
             damping=0,
             friction=300,
@@ -58,7 +58,7 @@ PRESTOE_CFG = ArticulationCfg(
             velocity_limit=100.0,
         ),
         "L_toe_pulley_pitch_acc" : ImplicitActuatorCfg(
-            joint_names_expr= ["R_toe_pulley_pitch"],
+            joint_names_expr= ["L_toe_pulley_pitch"],
             stiffness=0,
             damping=0,
             friction=300,
@@ -66,7 +66,7 @@ PRESTOE_CFG = ArticulationCfg(
             velocity_limit=100.0,
         ),
         "L_AR_pulley_pitch_acc" : ImplicitActuatorCfg(
-            joint_names_expr= ["R_AR_pulley_pitch"],
+            joint_names_expr= ["L_AR_pulley_pitch"],
             stiffness=0,
             damping=0,
             friction=300,

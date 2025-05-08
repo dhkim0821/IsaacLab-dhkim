@@ -3,7 +3,7 @@ from isaaclab.app import AppLauncher
 
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Running the PrestoeBiped RL environment.")
-parser.add_argument("--num_envs", type=int, default=2, 
+parser.add_argument("--num_envs", type=int, default=1, 
                     help="Number of environments to spawn.")
 
 # append AppLauncher cli args
@@ -35,7 +35,7 @@ def main():
     while simulation_app.is_running():
         with torch.inference_mode():
             # reset
-            if count % 50 == 0:
+            if count % 1000000 == 0:
                 count = 0
                 env.reset()
                 print("-" * 80)
@@ -45,20 +45,22 @@ def main():
                 # print("[INFO]: Joint efforts: ", joint_cmd)
                 obs, rew, terminated, truncated, info = env.step(joint_cmd)
 
+                print(terminated, rew)
                 pause = input("Press enter to continue...")
                 count += 1
             else:
                 joint_cmd = torch.zeros_like(env.action_manager.action)
                 # print("[INFO]: Joint efforts: ", joint_cmd)
                 obs, rew, terminated, truncated, info = env.step(joint_cmd)
+                print(terminated, rew)
                 # print current orientation of pole
                 # print("[Env 0]: Pole joint: ", obs["policy"][0][:])
                 # update counter
                 count += 1
                 # print(count)
 
-    # close the environment
-    env.close()
+    # # close the environment
+    # env.close()
 
 
 if __name__ == "__main__":
