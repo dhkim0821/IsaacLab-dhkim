@@ -15,10 +15,11 @@ from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.utils import configclass
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
-import prestoe_mdp as mdp
+from . import prestoe_mdp as mdp
+# import prestoe_mdp as mdp
 
-
-from prestoe_config import PRESTOE_CFG
+from .prestoe_config import PRESTOE_CFG
+# from prestoe_config import PRESTOE_CFG
 
 @configclass
 class PrestoeSceneCfg(InteractiveSceneCfg):
@@ -35,6 +36,24 @@ class PrestoeSceneCfg(InteractiveSceneCfg):
         prim_path="/World/light",
         spawn=sim_utils.DomeLightCfg(intensity=1000),
     )
+# @configclass
+# class CommandsCfg:
+#     """Command specifications for the MDP."""
+
+#     base_velocity = mdp.UniformVelocityCommandCfg(
+#         asset_name="robot",
+#         resampling_time_range=(10.0, 10.0),
+#         rel_standing_envs=0.02,
+#         rel_heading_envs=1.0,
+#         heading_command=True,
+#         heading_control_stiffness=0.5,
+#         debug_vis=True,
+#         ranges=mdp.UniformVelocityCommandCfg.Ranges(
+#             lin_vel_x=(-1.0, 1.0), lin_vel_y=(-1.0, 1.0), 
+#             ang_vel_z=(-1.0, 1.0), heading=(-math.pi, math.pi)
+#         ),
+#     )
+
 
 @configclass
 class ActionCfg:
@@ -65,69 +84,87 @@ class ObserationCfg:
 @configclass
 class EventCfg:
     # I took the code form PrestoeBiped_env_cfg.py
-    # add_base_mass = EventTerm(
-    #     func=mdp.randomize_rigid_body_mass,
-    #     mode="startup",
-    #     params={
-    #         "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
-    #         "mass_distribution_params": (-1, 1),
-    #         "operation": "add",
-    #     },
-    # )
+    add_base_mass = EventTerm(
+        func=mdp.randomize_rigid_body_mass,
+        mode="startup",
+        params={
+            "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
+            "mass_distribution_params": (-1, 1),
+            "operation": "add",
+        },
+    )
 
-    # base_external_force_torque = EventTerm(
-    #     func=mdp.apply_external_force_torque,
-    #     mode="reset",
-    #     params={
-    #         "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
-    #         "force_range": (0.0, 0.0),
-    #         "torque_range": (-0.0, 0.0),
-    #     },
-    # )
+    base_external_force_torque = EventTerm(
+        func=mdp.apply_external_force_torque,
+        mode="reset",
+        params={
+            "asset_cfg": SceneEntityCfg("robot", body_names="torso_link"),
+            "force_range": (0.0, 0.0),
+            "torque_range": (-0.0, 0.0),
+        },
+    )
 
-    # reset_robot_position = EventTerm(
-    #     func=mdp.reset_joints_by_offset,
-    #     mode="reset",
-    #     params={
-    #         "asset_cfg": SceneEntityCfg("robot", joint_names=[".*"]),
-    #         "position_range": (-0.1, 0.1),
-    #         "velocity_range": (-0.5, 0.5),
-    #     },
-    # )
+    reset_robot_position = EventTerm(
+        func=mdp.reset_joints_by_offset,
+        mode="reset",
+        params={
+            "asset_cfg": SceneEntityCfg("robot", joint_names=[".*"]),
+            "position_range": (-0.1, 0.1),
+            "velocity_range": (-0.5, 0.5),
+        },
+    )
 
-    # reset_base = EventTerm(
-    #     func=mdp.reset_root_state_uniform,
-    #     mode="reset",
-    #     params={
-    #         "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
-    #         "velocity_range": {
-    #             "x": (-0.5, 0.5),
-    #             "y": (-0.5, 0.5),
-    #             "z": (0, 0.5),
-    #             "roll": (-0.5, 0.5),
-    #             "pitch": (-0.5, 0.5),
-    #             "yaw": (-0.5, 0.5),
-    #         },
-    #     },
-    # )
+    reset_base = EventTerm(
+        func=mdp.reset_root_state_uniform,
+        mode="reset",
+        params={
+            "pose_range": {"x": (-0.005, 0.005), "y": (-0.005, 0.005), "yaw": (0, 0)},
+            "velocity_range": {
+                "x": (-0.005, 0.005),
+                "y": (-0.005, 0.005),
+                "z": (0, 0.005),
+                "roll": (-0.005, 0.005),
+                "pitch": (-0.005, 0.005),
+                "yaw": (-0.005, 0.005),
+            },
+        },
+    )
 
-    # reset_robot_joints = EventTerm(
-    #     func=mdp.reset_joints_by_scale,
-    #     mode="reset",
-    #     params={
-    #         "position_range": (0.0, 0.5),
-    #         "velocity_range": (0.0, 0.0),
-    #     },
-    # )
+    reset_base = EventTerm(
+        func=mdp.reset_root_state_uniform,
+        mode="reset",
+        params={
+            "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
+            "velocity_range": {
+                "x": (-0.5, 0.5),
+                "y": (-0.5, 0.5),
+                "z": (0, 0.5),
+                "roll": (-0.5, 0.5),
+                "pitch": (-0.5, 0.5),
+                "yaw": (-0.5, 0.5),
+            },
+        },
+    )
+
+    reset_robot_joints = EventTerm(
+        func=mdp.reset_joints_by_scale,
+        mode="reset",
+        params={
+            "position_range": (0.0, 0.0),
+            "velocity_range": (0.0, 0.0),
+        },
+    )
 
     # interval
-    # push_robot = EventTerm(
-    #     func=mdp.push_by_setting_velocity,
-    #     mode="interval",
-    #     interval_range_s=(10.0, 15.0),
-    #     params={"velocity_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5)}},
-    # )
-    pass
+    push_robot = EventTerm(
+        func=mdp.push_by_setting_velocity,
+        mode="interval",
+        interval_range_s=(10.0, 15.0),
+        params={"velocity_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5)}},
+    )
+
+    # reset_scene = EventTerm(func=mdp.reset_scene_to_default, mode='reset')
+    # pass
 
 @configclass
 class RewardsCfg:
@@ -143,6 +180,8 @@ class RewardsCfg:
     #     weight=0.5, 
     #     params={"command_name": "base_velocity", "std": 0.25}
     # )
+
+    alive = RewTerm(func=mdp.is_alive, weight=5.0)
 
     # -- penalties
     lin_vel_z_l2   = RewTerm(func=mdp.lin_vel_z_l2, weight=-2.0)
