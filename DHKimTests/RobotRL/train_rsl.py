@@ -62,16 +62,13 @@ from isaaclab.utils.dict import print_dict
 from isaaclab.utils.io import dump_pickle, dump_yaml
 
 import isaaclab_tasks  # noqa: F401
-# import DHKimTests.RobotRL.MiniArm  # noqa: F401
-# import DHKimTests.RobotRL.H1_test # noqa: F401
-# import DHKimTests.RobotRL.Prestoe # noqa: F401
-# import DHKimTests.RobotRL.BoxLift # noqa: F401
-# import DHKimTests.RobotRL.PrestoeBox # noqa: F401
-# import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
-# import Vivo # noqa: F401
-
-import PrestoeClosedLoopArticulation
-
+#import DHKimTests.RobotRL.MiniArm  # noqa: F401
+#import DHKimTests.RobotRL.H1_test # noqa: F401
+#import DHKimTests.RobotRL.Prestoe # noqa: F401
+#import DHKimTests.RobotRL.BoxLift # noqa: F401
+#import DHKimTests.RobotRL.PrestoeBox # noqa: F401
+#import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
+import Vivo # noqa: F401
 
 from isaaclab_tasks.utils import get_checkpoint_path
 from isaaclab_tasks.utils.hydra import hydra_task_config

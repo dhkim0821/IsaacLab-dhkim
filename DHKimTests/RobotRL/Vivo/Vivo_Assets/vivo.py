@@ -10,7 +10,7 @@ VIVO_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
         # usd_path=f"/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/DHKimTests/RobotRL/Vivo/Vivo_Assets/v1/robot.usd", currently is still hardcoded in the code
         #usd_path=f"/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/DHKimTests/RobotRL/Vivo/Vivo_Assets/v1/robot.usd",
-        usd_path=f"D:\CodeProjects\Isaac\IsaacLab-dhkim\DHKimTests\RobotRL\Vivo\Vivo_Assets/v1/robot.usd",
+        usd_path=f"C:\Isaac\IsaacLab-dhkim\DHKimTests\RobotRL\Vivo\Vivo_Assets/v1/robot.usd",
 
         activate_contact_sensors=True,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
@@ -23,7 +23,7 @@ VIVO_CFG = ArticulationCfg(
             max_depenetration_velocity=1.0,
         ),
         articulation_props=sim_utils.ArticulationRootPropertiesCfg(
-            enabled_self_collisions=False, solver_position_iteration_count=4, solver_velocity_iteration_count=0
+            enabled_self_collisions=True, solver_position_iteration_count=4, solver_velocity_iteration_count=0
         ),
     ),
     init_state=ArticulationCfg.InitialStateCfg(
