@@ -6,7 +6,7 @@
 from isaaclab.utils import configclass
 
 from isaaclab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import LocomotionVelocityRoughEnvCfg
-
+import math
 ##
 # Pre-defined configs
 ##
@@ -29,6 +29,11 @@ class UnitreeGo2RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         # reduce action scale
         self.actions.joint_pos.scale = 0.25
 
+        #increased command range
+        self.commands.base_velocity.ranges.lin_vel_x = (-3.0,3.0)
+        self.commands.base_velocity.ranges.lin_vel_y = (-2.0,2.0)
+        self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
+        self.commands.base_velocity.ranges.heading = (-math.pi, math.pi)
         # event
         self.events.push_robot = None
         self.events.add_base_mass.params["mass_distribution_params"] = (-1.0, 3.0)
