@@ -17,7 +17,7 @@ from isaaclab.managers import RewardTermCfg as RewTerm
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.managers import TerminationTermCfg as DoneTerm
 from isaaclab.scene import InteractiveSceneCfg
-from isaaclab.sensors import ContactSensorCfg, RayCasterCfg, patterns
+from isaaclab.sensors import ContactSensorCfg, RayCasterCfg, patterns, Camera
 from isaaclab.terrains import TerrainImporterCfg
 from isaaclab.utils import configclass
 from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
@@ -72,6 +72,17 @@ class MySceneCfg(InteractiveSceneCfg):
         mesh_prim_paths=["/World/ground"],
     )
     contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", history_length=3, track_air_time=True)
+
+    depth_camera = Camera(
+        prim_path="{ENV_REGEX_NS}/Robot/base",
+        frequency=20,
+        width=256,
+        height=256,
+        data_types=["depth"], 
+        # offset=Camera.OffsetCfg(pos=(0.0, 0.0, 25.0)),  # optional
+        # orientation=rot_utils.euler_angles_to_quats(np.array([0, 90, 0]), degrees=True),  # optional
+    )
+
     # lights
     sky_light = AssetBaseCfg(
         prim_path="/World/skyLight",
@@ -133,13 +144,20 @@ class ObservationsCfg:
         joint_pos = ObsTerm(func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
         joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=Unoise(n_min=-1.5, n_max=1.5))
         actions = ObsTerm(func=mdp.last_action)
-        height_scan = ObsTerm(
-            func=mdp.height_scan,
-            params={"sensor_cfg": SceneEntityCfg("height_scanner")},
-            noise=Unoise(n_min=-0.1, n_max=0.1),
-            clip=(-1.0, 1.0),
+        #height_scan = ObsTerm(
+        #    func=mdp.height_scan,
+        #    params={"sensor_cfg": SceneEntityCfg("height_scanner")},
+        #    noise=Unoise(n_min=-0.1, n_max=0.1),
+        #    clip=(-1.0, 1.0),
+        #)
+        depth_image = ObsTerm(
+            func=mdp.depth_flattened,
+            params={
+                "sensor_cfg": SceneEntityCfg("depth_camera"),
+                "data_type": "depth",
+                "normalize": True
+            },
         )
-
         def __post_init__(self):
             self.enable_corruption = True
             self.concatenate_terms = True
@@ -310,6 +328,8 @@ class LocomotionVelocityRoughEnvCfg(ManagerBasedRLEnvCfg):
         # we tick all the sensors based on the smallest update period (physics update period)
         if self.scene.height_scanner is not None:
             self.scene.height_scanner.update_period = self.decimation * self.sim.dt
+        if self.scene.depth_camera is not None:
+            self.scene.depth_camera.update_period = self.decimation * self.sim.dt
         if self.scene.contact_forces is not None:
             self.scene.contact_forces.update_period = self.sim.dt
 

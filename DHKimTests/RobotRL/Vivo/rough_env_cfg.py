@@ -79,7 +79,10 @@ class VivoRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         super().__post_init__()
 
         self.scene.robot = VIVO_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
-        self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/body"
+        
+        #self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/body"
+        self.scene.height_scanner = None
+        self.scene.depth_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Camera_Pseudo_Depth"
 
         # scale down the terrains because the robot is small
         self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.025, 0.1)
