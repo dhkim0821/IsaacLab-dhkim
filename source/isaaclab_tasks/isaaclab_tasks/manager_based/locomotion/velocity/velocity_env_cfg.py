@@ -17,7 +17,7 @@ from isaaclab.managers import RewardTermCfg as RewTerm
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.managers import TerminationTermCfg as DoneTerm
 from isaaclab.scene import InteractiveSceneCfg
-from isaaclab.sensors import ContactSensorCfg, RayCasterCfg, patterns, Camera
+from isaaclab.sensors import TiledCameraCfg, ContactSensorCfg, RayCasterCfg, patterns
 from isaaclab.terrains import TerrainImporterCfg
 from isaaclab.utils import configclass
 from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
@@ -73,14 +73,19 @@ class MySceneCfg(InteractiveSceneCfg):
     )
     contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", history_length=3, track_air_time=True)
 
-    depth_camera = Camera(
-        prim_path="{ENV_REGEX_NS}/Robot/base",
-        frequency=20,
+    tiled_camera = TiledCameraCfg(
+        prim_path="{ENV_REGEX_NS}/Robot/body/RSD455/Camera_Pseudo_Depth", 
+        data_types=["depth"], 
         width=256,
         height=256,
-        data_types=["depth"], 
-        # offset=Camera.OffsetCfg(pos=(0.0, 0.0, 25.0)),  # optional
-        # orientation=rot_utils.euler_angles_to_quats(np.array([0, 90, 0]), degrees=True),  # optional
+        # offset=TiledCameraCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)), 
+        #spawn=sim_utils.PinholeCameraCfg(
+        #    focal_length=24.0,
+        #    focus_distance=400.0,
+        #    horizontal_aperture=20.955,
+        #    clipping_range=(0.1, 20.0)
+        #)
+        spawn = None
     )
 
     # lights
@@ -150,10 +155,11 @@ class ObservationsCfg:
         #    noise=Unoise(n_min=-0.1, n_max=0.1),
         #    clip=(-1.0, 1.0),
         #)
-        depth_image = ObsTerm(
+        # Replace depth_image with tiled_camera
+        tiled_depth = ObsTerm(
             func=mdp.depth_flattened,
             params={
-                "sensor_cfg": SceneEntityCfg("depth_camera"),
+                "sensor_cfg": SceneEntityCfg("tiled_camera"),
                 "data_type": "depth",
                 "normalize": True
             },
@@ -328,8 +334,8 @@ class LocomotionVelocityRoughEnvCfg(ManagerBasedRLEnvCfg):
         # we tick all the sensors based on the smallest update period (physics update period)
         if self.scene.height_scanner is not None:
             self.scene.height_scanner.update_period = self.decimation * self.sim.dt
-        if self.scene.depth_camera is not None:
-            self.scene.depth_camera.update_period = self.decimation * self.sim.dt
+        if self.scene.tiled_camera is not None:
+            self.scene.tiled_camera.update_period = self.decimation * self.sim.dt
         if self.scene.contact_forces is not None:
             self.scene.contact_forces.update_period = self.sim.dt
 

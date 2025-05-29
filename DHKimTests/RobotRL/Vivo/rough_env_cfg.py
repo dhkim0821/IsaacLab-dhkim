@@ -82,8 +82,8 @@ class VivoRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         
         #self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/body"
         self.scene.height_scanner = None
-        self.scene.depth_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Camera_Pseudo_Depth"
-
+        self.scene.tiled_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Camera_Pseudo_Depth"
+        
         # scale down the terrains because the robot is small
         self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.025, 0.1)
         self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_range = (0.01, 0.06)
