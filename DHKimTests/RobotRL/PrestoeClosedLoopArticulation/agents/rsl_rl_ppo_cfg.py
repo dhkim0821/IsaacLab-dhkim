@@ -17,7 +17,7 @@ class Prestoe_PPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
     max_iterations = 20000
     save_interval = 200
-    experiment_name = "prestoe_test"
+    experiment_name = "prestoeclosedlooparticulation_test"
     empirical_normalization = True
     policy = RslRlPpoActorCriticCfg(
         init_noise_std=10.0,
