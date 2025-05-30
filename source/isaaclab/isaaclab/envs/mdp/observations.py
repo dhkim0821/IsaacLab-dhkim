@@ -279,6 +279,17 @@ def image(
 
     return images.clone()
 
+def depth_flattened(
+    env,
+    sensor_cfg: SceneEntityCfg = SceneEntityCfg("depth_camera"),
+    data_type: str = "depth",
+    normalize: bool = True,
+) -> torch.Tensor:
+    """
+    Fetch and flatten the depth image for RL policy input.
+    """
+    depth = image(env, sensor_cfg=sensor_cfg, data_type=data_type, normalize=normalize)
+    return depth.view(depth.shape[0], -1)  # (num_envs, H*W)
 
 class image_features(ManagerTermBase):
     """Extracted image features from a pre-trained frozen encoder.
