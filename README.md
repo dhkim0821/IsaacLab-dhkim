@@ -1,6 +1,12 @@
 ![Isaac Lab](docs/source/_static/isaaclab.jpg)
 
 ---
+**Quick Install Instruction for IsaacLab-dhkim**
+
+```bash
+cd IsaacLab-dhkim/DHKimTests/rsl_rl
+pip install -e .
+```
 
 # Isaac Lab
 
