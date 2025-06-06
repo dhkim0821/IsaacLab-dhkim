@@ -13,7 +13,6 @@ gym.register(
         "skrl_cfg_entry_point": f"{agents.__name__}:skrl_ppo_cfg.yaml",
     },
 )
-
 gym.register(
     id="Vivo-RL-Play-v0",
     entry_point="isaaclab.envs:ManagerBasedRLEnv",

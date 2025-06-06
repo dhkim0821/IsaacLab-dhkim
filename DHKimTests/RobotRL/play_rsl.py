@@ -42,7 +42,7 @@ import gymnasium as gym
 import os
 import torch
 
-from rsl_rl.runners import OnPolicyRunner
+from DHKimTests.RobotRL.rsl_rl.rsl_rl2.runners import OnPolicyRunner
 
 from isaaclab.envs import DirectMARLEnv, multi_agent_to_single_agent
 from isaaclab.utils.dict import print_dict
@@ -58,7 +58,7 @@ import Vivo
 
 
 from isaaclab_tasks.utils import get_checkpoint_path, parse_env_cfg
-from isaaclab_rl.rsl_rl import (
+from DHKimTests.RobotRL.rsl_rl import (
     RslRlOnPolicyRunnerCfg,
     RslRlVecEnvWrapper,
     export_policy_as_jit,

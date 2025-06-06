@@ -29,6 +29,7 @@ class RslRlPpoActorCriticCfg:
     """The activation function for the actor and critic networks."""
 
 
+
 @configclass
 class RslRlPpoAlgorithmCfg:
     """Configuration for the PPO algorithm."""

@@ -8,14 +8,7 @@ from isaaclab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import Lo
 from isaaclab.managers import CurriculumTermCfg as CurrTerm
 import math
 
-##
-# Pre-defined configs
-##
 from Vivo.Vivo_Assets.vivo import VIVO_CFG  # isort: skip
-
-
-
-
 
 # ------------------------------------------------------------
 # Curriculum Configuration for Command Range in X and Y axes
@@ -37,7 +30,7 @@ class CurriculumCfgWithCommandRange(CurriculumCfg):
             "command_name": "base_velocity",  # The target command being modified
             "attribute": "ranges.lin_vel_x",  # Attribute within the environment to be changed
             "range_start": (-1.0, 1.0),       # Initial value range at curriculum step 0
-            "range_end": (-3.0, 3.0),         # Final value range after all steps (here it’s constant)
+            "range_end": (-1.0, 1.0),         # Final value range after all steps (here it’s constant)
             
             # num_steps determines how many curriculum steps (transitions) are applied
             # Example:
@@ -62,7 +55,7 @@ class CurriculumCfgWithCommandRange(CurriculumCfg):
             "command_name": "base_velocity",
             "attribute": "ranges.lin_vel_y",
             "range_start": (-1.0, 1.0),       # Start with a narrower range for lateral commands
-            "range_end": (-2.0, 2.0),         # Gradually widen to allow more dynamic movement
+            "range_end": (-1.0, 1.0),         # Gradually widen to allow more dynamic movement
             "num_steps": 2,                   # Again, two curriculum steps to reach final range
             "increment_every": 2000,          # Applied every 2000 training iterations
         },
@@ -80,9 +73,9 @@ class VivoRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
 
         self.scene.robot = VIVO_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         
-        #self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/body"
-        self.scene.height_scanner = None
-        self.scene.tiled_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Camera_Pseudo_Depth"
+        self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/body"
+        #self.scene.height_scanner = None
+        #self.scene.tiled_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Camera_OmniVision_OV9782_Color"
         
         # scale down the terrains because the robot is small
         self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.025, 0.1)

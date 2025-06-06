@@ -82,7 +82,7 @@ class DepthObservationsCfg:
         """Observations for policy group with depth images."""
 
         image = ObsTerm(
-            func=mdp.image, params={"sensor_cfg": SceneEntityCfg("tiled_camera"), "data_type": "distance_to_camera"}
+            func=mdp.image, params={"sensor_cfg": SceneEntityCfg("tiled_camera"), "data_type": "depth"}
         )
 
     policy: ObsGroup = DepthCameraPolicyCfg()
