@@ -4,8 +4,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 from isaaclab.utils import configclass
 
-from isaaclab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import LocomotionVelocityRoughEnvCfg, CurriculumCfg
-from isaaclab.managers import CurriculumTermCfg as CurrTerm
+from isaaclab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import LocomotionVelocityRoughEnvCfg, CurriculumCfg, MySceneCfg as BaseMySceneCfg, ObservationsCfg as BaseObservationsCfg
+from isaaclab.managers import CurriculumTermCfg as CurrTerm, ObservationTermCfg as ObsTerm, SceneEntityCfg
+from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
+import isaaclab_tasks.manager_based.locomotion.velocity.mdp as mdp
+from isaaclab.sensors import RayCasterCfg, patterns
+import isaaclab.sim as sim_utils
 import math
 
 from Vivo.Vivo_Assets.vivo import VIVO_CFG  # isort: skip
@@ -61,11 +65,42 @@ class CurriculumCfgWithCommandRange(CurriculumCfg):
         },
     )
 
-    
+@configclass
+class MySceneCfg(BaseMySceneCfg):
+    height_scanner = RayCasterCfg(
+        prim_path="{ENV_REGEX_NS}/Robot/base",
+        offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
+        attach_yaw_only=True,
+        pattern_cfg=patterns.GridPatternCfg(resolution=0.1, size=[1.6, 1.0]),
+        debug_vis=False,
+        mesh_prim_paths=["/World/ground"],
+    )
+
+@configclass
+class ObservationsCfg(BaseObservationsCfg):
+    @configclass
+    class PolicyCfg(BaseObservationsCfg.PolicyCfg):
+        # Add or override the height_scan observation
+        height_scan = ObsTerm(
+            func=mdp.height_scan,
+            params={"sensor_cfg": SceneEntityCfg("height_scanner")},
+            noise=Unoise(n_min=-0.1, n_max=0.1),
+            clip=(-1.0, 1.0),
+        )
+
+        def __post_init__(self):
+            super().__post_init__()  # Calls base class logic (optional if you don't override)
+            # Add your own custom logic here if needed
+
+    policy: PolicyCfg = PolicyCfg()
+
+
 @configclass
 class VivoRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
     # Use the new curriculum config class
     curriculum: CurriculumCfgWithCommandRange = CurriculumCfgWithCommandRange()
+    scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
+    observations: ObservationsCfg = ObservationsCfg()
 
     def __post_init__(self):
         # post init of parent
@@ -90,6 +125,11 @@ class VivoRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         #self.commands.base_velocity.ranges.lin_vel_y = (1.9, 2.0)
         #self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
         #self.commands.base_velocity.ranges.heading = (-math.pi, math.pi)
+
+        #sensor ticks
+        if self.scene.height_scanner is not None:
+            self.scene.height_scanner.update_period = self.decimation * self.sim.dt
+
 
         # event
         self.events.push_robot = None

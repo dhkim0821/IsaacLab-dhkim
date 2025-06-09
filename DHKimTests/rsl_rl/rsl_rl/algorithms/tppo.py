@@ -9,7 +9,7 @@ import rsl_rl.modules as modules
 from rsl_rl.utils import unpad_trajectories
 from rsl_rl.storage.rollout_storage import ActionLabelRollout
 from rsl_rl.algorithms.ppo import PPO
-#from DHKimTests.RobotRL import LEGGED_GYM_ROOT_DIR
+from DHKimTests.legged_gym import LEGGED_GYM_ROOT_DIR
 
 # assuming learning iteration is at an assumable iteration scale
 def GET_PROB_FUNC(option, iteration_scale):
@@ -75,8 +75,8 @@ class TPPO(PPO):
         # build and load teacher network
         teacher_actor_critic = getattr(modules, teacher_policy_class_name)(**teacher_policy)
         if not teacher_ac_path is None:
-            #if "{LEGGED_GYM_ROOT_DIR}" in teacher_ac_path:
-            #    teacher_ac_path = teacher_ac_path.format(LEGGED_GYM_ROOT_DIR= LEGGED_GYM_ROOT_DIR)
+            if "{LEGGED_GYM_ROOT_DIR}" in teacher_ac_path:
+                teacher_ac_path = teacher_ac_path.format(LEGGED_GYM_ROOT_DIR= LEGGED_GYM_ROOT_DIR)
             state_dict = torch.load(teacher_ac_path, map_location= "cpu")
             teacher_actor_critic_state_dict = state_dict["model_state_dict"]
             teacher_actor_critic.load_state_dict(teacher_actor_critic_state_dict)
