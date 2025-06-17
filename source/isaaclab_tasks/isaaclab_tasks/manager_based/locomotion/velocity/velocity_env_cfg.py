@@ -149,19 +149,7 @@ class ObservationsCfg:
         joint_pos = ObsTerm(func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
         joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=Unoise(n_min=-1.5, n_max=1.5))
         actions = ObsTerm(func=mdp.last_action)
-        #height_scan = ObsTerm(
-        #    func=mdp.height_scan,
-        #    params={"sensor_cfg": SceneEntityCfg("height_scanner")},
-        #    noise=Unoise(n_min=-0.1, n_max=0.1),
-        #    clip=(-1.0, 1.0),
-        #)
-        # Replace depth_image with tiled_camera
-        #image = ObsTerm(
-        #    func=mdp.image_flattened,
-        #    params={"sensor_cfg": SceneEntityCfg("tiled_camera"), "data_type": "depth"},
-        #    noise=Unoise(n_min=-0.1, n_max=0.1)
-        #)
-        
+
         def __post_init__(self):
             self.enable_corruption = True
             self.concatenate_terms = True

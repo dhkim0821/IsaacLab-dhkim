@@ -28,6 +28,28 @@ class RslRlPpoActorCriticCfg:
     activation: str = MISSING
     """The activation function for the actor and critic networks."""
 
+@configclass
+class RslRlDistillationAlgorithmCfg:
+    """Configuration for the Distillation algorithm."""
+
+    class_name: str = "Distillation"
+    """The algorithm class name. Default is Distillation."""
+
+    num_learning_epochs: int = 1
+    """The number of learning epochs per update."""
+
+    gradient_length: int = 15
+    """Number of gradient accumulation steps before optimizer step."""
+
+    learning_rate: float = 1e-3
+    """The learning rate for the student."""
+
+    max_grad_norm: float = None
+    """The maximum gradient norm."""
+
+    loss_type: str = "mse"
+    """The loss type for distillation. Either 'mse' or 'huber'."""
+
 
 
 @configclass

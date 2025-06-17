@@ -25,45 +25,45 @@ from Vivo.Vivo_Assets.vivo import VIVO_CFG  # isort: skip
 # behavior. The curriculum progression only happens during training.
 # ------------------------------------------------------------
 
-@configclass
-class CurriculumCfgWithCommandRange(CurriculumCfg):
-    # Curriculum for X-axis linear velocity (forward/backward motion)
-    command_range_x = CurrTerm(
-        func="isaaclab_tasks.manager_based.locomotion.velocity.mdp.curriculums:command_range_curriculum",
-        params={
-            "command_name": "base_velocity",  # The target command being modified
-            "attribute": "ranges.lin_vel_x",  # Attribute within the environment to be changed
-            "range_start": (-1.0, 1.0),       # Initial value range at curriculum step 0
-            "range_end": (-1.0, 1.0),         # Final value range after all steps (here it’s constant)
+# @configclass
+# class CurriculumCfgWithCommandRange(CurriculumCfg):
+#     # Curriculum for X-axis linear velocity (forward/backward motion)
+#     command_range_x = CurrTerm(
+#         func="isaaclab_tasks.manager_based.locomotion.velocity.mdp.curriculums:command_range_curriculum",
+#         params={
+#             "command_name": "base_velocity",  # The target command being modified
+#             "attribute": "ranges.lin_vel_x",  # Attribute within the environment to be changed
+#             "range_start": (-1.0, 1.0),       # Initial value range at curriculum step 0
+#             "range_end": (-1.0, 1.0),         # Final value range after all steps (here it’s constant)
             
-            # num_steps determines how many curriculum steps (transitions) are applied
-            # Example:
-            #   range_start: (-1.0, 1.0)
-            #   range_end: (-3.0, 3.0)
-            #   num_steps: 4
-            # The curriculum progresses as:
-            #   Step 0: (-1.0, 1.0)
-            #   Step 1: (-1.5, 1.5)
-            #   Step 2: (-2.0, 2.0)
-            #   Step 3: (-2.5, 2.5)
-            #   Step 4: (-3.0, 3.0)
-            "num_steps": 2,                   # Number of curriculum steps (excluding the initial one)
-            "increment_every": 2000,          # Number of training iterations before advancing one step
-        },
-    )
+#             # num_steps determines how many curriculum steps (transitions) are applied
+#             # Example:
+#             #   range_start: (-1.0, 1.0)
+#             #   range_end: (-3.0, 3.0)
+#             #   num_steps: 4
+#             # The curriculum progresses as:
+#             #   Step 0: (-1.0, 1.0)
+#             #   Step 1: (-1.5, 1.5)
+#             #   Step 2: (-2.0, 2.0)
+#             #   Step 3: (-2.5, 2.5)
+#             #   Step 4: (-3.0, 3.0)
+#             "num_steps": 2,                   # Number of curriculum steps (excluding the initial one)
+#             "increment_every": 2000,          # Number of training iterations before advancing one step
+#         },
+#     )
 
-    # Curriculum for Y-axis linear velocity (lateral motion)
-    command_range_y = CurrTerm(
-        func="isaaclab_tasks.manager_based.locomotion.velocity.mdp.curriculums:command_range_curriculum",
-        params={
-            "command_name": "base_velocity",
-            "attribute": "ranges.lin_vel_y",
-            "range_start": (-1.0, 1.0),       # Start with a narrower range for lateral commands
-            "range_end": (-1.0, 1.0),         # Gradually widen to allow more dynamic movement
-            "num_steps": 2,                   # Again, two curriculum steps to reach final range
-            "increment_every": 2000,          # Applied every 2000 training iterations
-        },
-    )
+#     # Curriculum for Y-axis linear velocity (lateral motion)
+#     command_range_y = CurrTerm(
+#         func="isaaclab_tasks.manager_based.locomotion.velocity.mdp.curriculums:command_range_curriculum",
+#         params={
+#             "command_name": "base_velocity",
+#             "attribute": "ranges.lin_vel_y",
+#             "range_start": (-1.0, 1.0),       # Start with a narrower range for lateral commands
+#             "range_end": (-1.0, 1.0),         # Gradually widen to allow more dynamic movement
+#             "num_steps": 2,                   # Again, two curriculum steps to reach final range
+#             "increment_every": 2000,          # Applied every 2000 training iterations
+#         },
+#     )
 
 @configclass
 class MySceneCfg(BaseMySceneCfg):
@@ -98,7 +98,7 @@ class ObservationsCfg(BaseObservationsCfg):
 @configclass
 class VivoRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
     # Use the new curriculum config class
-    curriculum: CurriculumCfgWithCommandRange = CurriculumCfgWithCommandRange()
+    #curriculum: CurriculumCfgWithCommandRange = CurriculumCfgWithCommandRange()
     scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
     observations: ObservationsCfg = ObservationsCfg()
 

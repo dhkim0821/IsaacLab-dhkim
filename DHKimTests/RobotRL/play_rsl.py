@@ -42,7 +42,7 @@ import gymnasium as gym
 import os
 import torch
 
-from DHKimTests.RobotRL.rsl_rl.rsl_rl2.runners import OnPolicyRunner
+from rsl_rl.runners import OnPolicyRunner
 
 from isaaclab.envs import DirectMARLEnv, multi_agent_to_single_agent
 from isaaclab.utils.dict import print_dict
@@ -56,9 +56,12 @@ import isaaclab_tasks  # noqa: F401
 #import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
 import Vivo
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 from isaaclab_tasks.utils import get_checkpoint_path, parse_env_cfg
-from DHKimTests.RobotRL.rsl_rl import (
+from isaaclab_rl.rsl_rl import (
     RslRlOnPolicyRunnerCfg,
     RslRlVecEnvWrapper,
     export_policy_as_jit,
@@ -113,13 +116,13 @@ def main():
     policy = ppo_runner.get_inference_policy(device=env.unwrapped.device)
 
     # export policy to onnx/jit
-    export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
-    export_policy_as_jit(
-        ppo_runner.alg.policy, ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.pt"
-    )
-    export_policy_as_onnx(
-        ppo_runner.alg.policy, normalizer=ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.onnx"
-    )
+    #export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
+    #export_policy_as_jit(
+    #    ppo_runner.alg.policy, ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.pt"
+    #)
+    #export_policy_as_onnx(
+    #    ppo_runner.alg.policy, normalizer=ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.onnx"
+    #)
 
     # reset environment
     obs, _ = env.get_observations()
@@ -132,6 +135,23 @@ def main():
             actions = policy(obs)
             # env stepping
             obs, _, _, _ = env.step(actions)
+
+            # -- Visualize depth image for env 0, show value range
+            depth_start = 44
+            depth_end = 44 + 3072
+            depth_image_flat = obs[0, depth_start:depth_end].cpu().numpy()
+            depth_image = depth_image_flat.reshape(48, 64)
+
+            # Value range for this frame
+            min_val = np.min(depth_image)
+            max_val = np.max(depth_image)
+            mean_val = np.mean(depth_image)
+
+            plt.imshow(depth_image)  # plasma or 'gray', but plasma shows range better
+            plt.colorbar(label='Depth (meters)')
+            plt.title(f"Depth Img t={timestep}\nmin={min_val:.2f}, max={max_val:.2f}, mean={mean_val:.2f}")
+            plt.pause(0.001)
+            plt.clf()
         if args_cli.video:
             timestep += 1
             # Exit the play loop after recording one video

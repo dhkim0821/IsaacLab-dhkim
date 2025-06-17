@@ -8,7 +8,7 @@ from isaaclab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import Lo
 from isaaclab.managers import CurriculumTermCfg as CurrTerm, ObservationTermCfg as ObsTerm, SceneEntityCfg
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 import isaaclab_tasks.manager_based.locomotion.velocity.mdp as mdp
-from isaaclab.sensors import TiledCameraCfg
+from isaaclab.sensors import TiledCameraCfg, RayCasterCfg, patterns
 import isaaclab.sim as sim_utils
 import math
 from Vivo.Vivo_Assets.vivo import VIVO_CFG  # isort: skip
@@ -24,45 +24,46 @@ from Vivo.Vivo_Assets.vivo import VIVO_CFG  # isort: skip
 # behavior. The curriculum progression only happens during training.
 # ------------------------------------------------------------
 
-@configclass
-class CurriculumCfgWithCommandRange(CurriculumCfg):
-    # Curriculum for X-axis linear velocity (forward/backward motion)
-    command_range_x = CurrTerm(
-        func="isaaclab_tasks.manager_based.locomotion.velocity.mdp.curriculums:command_range_curriculum",
-        params={
-            "command_name": "base_velocity",  # The target command being modified
-            "attribute": "ranges.lin_vel_x",  # Attribute within the environment to be changed
-            "range_start": (-1.0, 1.0),       # Initial value range at curriculum step 0
-            "range_end": (-1.0, 1.0),         # Final value range after all steps (here it’s constant)
+# @configclass
+# class CurriculumCfgWithCommandRange(CurriculumCfg):
+#     # Curriculum for X-axis linear velocity (forward/backward motion)
+#     command_range_x = CurrTerm(
+#         func="isaaclab_tasks.manager_based.locomotion.velocity.mdp.curriculums:command_range_curriculum",
+#         params={
+#             "command_name": "base_velocity",  # The target command being modified
+#             "attribute": "ranges.lin_vel_x",  # Attribute within the environment to be changed
+#             "range_start": (-1.0, 1.0),       # Initial value range at curriculum step 0
+#             "range_end": (-1.0, 1.0),         # Final value range after all steps (here it’s constant)
             
-            # num_steps determines how many curriculum steps (transitions) are applied
-            # Example:
-            #   range_start: (-1.0, 1.0)
-            #   range_end: (-3.0, 3.0)
-            #   num_steps: 4
-            # The curriculum progresses as:
-            #   Step 0: (-1.0, 1.0)
-            #   Step 1: (-1.5, 1.5)
-            #   Step 2: (-2.0, 2.0)
-            #   Step 3: (-2.5, 2.5)
-            #   Step 4: (-3.0, 3.0)
-            "num_steps": 2,                   # Number of curriculum steps (excluding the initial one)
-            "increment_every": 2000,          # Number of training iterations before advancing one step
-        },
-    )
+#             # num_steps determines how many curriculum steps (transitions) are applied
+#             # Example:
+#             #   range_start: (-1.0, 1.0)
+#             #   range_end: (-3.0, 3.0)
+#             #   num_steps: 4
+#             # The curriculum progresses as:
+#             #   Step 0: (-1.0, 1.0)
+#             #   Step 1: (-1.5, 1.5)
+#             #   Step 2: (-2.0, 2.0)
+#             #   Step 3: (-2.5, 2.5)
+#             #   Step 4: (-3.0, 3.0)
+#             "num_steps": 2,                   # Number of curriculum steps (excluding the initial one)
+#             "increment_every": 2000,          # Number of training iterations before advancing one step
+#         },
+#     )
 
-    # Curriculum for Y-axis linear velocity (lateral motion)
-    command_range_y = CurrTerm(
-        func="isaaclab_tasks.manager_based.locomotion.velocity.mdp.curriculums:command_range_curriculum",
-        params={
-            "command_name": "base_velocity",
-            "attribute": "ranges.lin_vel_y",
-            "range_start": (-1.0, 1.0),       # Start with a narrower range for lateral commands
-            "range_end": (-1.0, 1.0),         # Gradually widen to allow more dynamic movement
-            "num_steps": 2,                   # Again, two curriculum steps to reach final range
-            "increment_every": 2000,          # Applied every 2000 training iterations
-        },
-    )
+#     # Curriculum for Y-axis linear velocity (lateral motion)
+#     command_range_y = CurrTerm(
+#         func="isaaclab_tasks.manager_based.locomotion.velocity.mdp.curriculums:command_range_curriculum",
+#         params={
+#             "command_name": "base_velocity",
+#             "attribute": "ranges.lin_vel_y",
+#             "range_start": (-1.0, 1.0),       # Start with a narrower range for lateral commands
+#             "range_end": (-1.0, 1.0),         # Gradually widen to allow more dynamic movement
+#             "num_steps": 2,                   # Again, two curriculum steps to reach final range
+#             "increment_every": 2000,          # Applied every 2000 training iterations
+#         },
+#     )
+
 
 @configclass
 class MySceneCfg(BaseMySceneCfg):
@@ -74,19 +75,28 @@ class MySceneCfg(BaseMySceneCfg):
         width=64,
         height=48,
         # Uncomment and set for a specific offset:
-        # offset=TiledCameraCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
-        #offset=TiledCameraCfg.OffsetCfg(
+        #offset=TiledCameraCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
+        # offset=TiledCameraCfg.OffsetCfg(
         #    pos=(0.0, 0.0115, 0.0),
-        #    rot=(-0.5, -0.5, 0.5, 0.5),    # Euler angles in degrees
+        #    rot=(0,0,0,0)
         #    #rot_type="euler"
-        #),
-        #spawn=sim_utils.PinholeCameraCfg(
+        # ),
+        # spawn=sim_utils.PinholeCameraCfg(
         #    focal_length=24.0,
         #    focus_distance=400.0,
         #    horizontal_aperture=20.955,
         #    clipping_range=(0.1, 20.0)
-        #)
+        # )
         spawn=None
+    )
+
+    height_scanner = RayCasterCfg(
+        prim_path="{ENV_REGEX_NS}/Robot/base",
+        offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
+        attach_yaw_only=True,
+        pattern_cfg=patterns.GridPatternCfg(resolution=0.1, size=[1.6, 1.0]),
+        debug_vis=False,
+        mesh_prim_paths=["/World/ground"],
     )
 
 @configclass
@@ -96,8 +106,21 @@ class ObservationsCfg(BaseObservationsCfg):
         # Add or override the image observation
         image = ObsTerm(
             func=mdp.image_flattened,
-            params={"sensor_cfg": SceneEntityCfg("tiled_camera"), "data_type": "depth"},
-            noise=Unoise(n_min=-0.1, n_max=0.1)
+            params={
+                "sensor_cfg": SceneEntityCfg("tiled_camera"),
+                "data_type": "depth",
+                "normalize": False,
+            },
+            noise=Unoise(n_min=-0.05, n_max=0.1),
+            clip=(0.1, 20.0),  
+        )
+
+
+        height_scan = ObsTerm(
+            func=mdp.height_scan,
+            params={"sensor_cfg": SceneEntityCfg("height_scanner")},
+            noise=Unoise(n_min=-0.1, n_max=0.1),
+            clip=(-1.0, 1.0),
         )
 
         def __post_init__(self):
@@ -109,7 +132,7 @@ class ObservationsCfg(BaseObservationsCfg):
 @configclass
 class VivoRoughEnvCfgDistill(LocomotionVelocityRoughEnvCfg):
     # Use the new curriculum config class
-    curriculum: CurriculumCfgWithCommandRange = CurriculumCfgWithCommandRange()
+    # curriculum: CurriculumCfgWithCommandRange = CurriculumCfgWithCommandRange()
     scene: MySceneCfg = MySceneCfg(num_envs=4096, env_spacing=2.5)
     observations: ObservationsCfg = ObservationsCfg()
 
@@ -119,7 +142,7 @@ class VivoRoughEnvCfgDistill(LocomotionVelocityRoughEnvCfg):
 
         self.scene.robot = VIVO_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         
-        #self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/body"
+        self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/body"
         #self.scene.height_scanner = None
         self.scene.tiled_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Camera_OmniVision_OV9782_Color"
         #self.scene.tiled_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Depth_Camera"
@@ -141,6 +164,8 @@ class VivoRoughEnvCfgDistill(LocomotionVelocityRoughEnvCfg):
         #sensor ticks
         if self.scene.tiled_camera is not None:
             self.scene.tiled_camera.update_period = self.decimation * self.sim.dt
+        if self.scene.height_scanner is not None:
+            self.scene.height_scanner.update_period = self.decimation * self.sim.dt
 
         # event
         self.events.push_robot = None
@@ -171,3 +196,28 @@ class VivoRoughEnvCfgDistill(LocomotionVelocityRoughEnvCfg):
 
         # terminations
         self.terminations.base_contact.params["sensor_cfg"].body_names = "body"
+
+
+
+@configclass
+class VivoRoughEnvCfgDistill_PLAY(VivoRoughEnvCfgDistill):
+    def __post_init__(self):
+        # post init of parent
+        super().__post_init__()
+
+        # make a smaller scene for play
+        self.scene.num_envs = 50
+        self.scene.env_spacing = 2.5
+        # spawn the robot randomly in the grid (instead of their terrain levels)
+        self.scene.terrain.max_init_terrain_level = None
+        # reduce the number of terrains to save memory
+        if self.scene.terrain.terrain_generator is not None:
+            self.scene.terrain.terrain_generator.num_rows = 5
+            self.scene.terrain.terrain_generator.num_cols = 5
+            self.scene.terrain.terrain_generator.curriculum = False
+
+        # disable randomization for play
+        self.observations.policy.enable_corruption = False
+        # remove random pushing event
+        self.events.base_external_force_torque = None
+        self.events.push_robot = None

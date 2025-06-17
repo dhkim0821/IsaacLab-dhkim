@@ -29,6 +29,8 @@
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
 
 from .actor_critic import ActorCritic
+from .actor_critic_visual import ActorCriticVisual
+from .student_teacher_visual import StudentTeacherVisual
 from .actor_critic_recurrent import ActorCriticRecurrent
 from .visual_actor_critic import VisualDeterministicRecurrent, VisualDeterministicAC
 from .actor_critic_mutex import ActorCriticMutex
@@ -67,9 +69,11 @@ def build_actor_critic(env, policy_class_name, policy_cfg):
 
 __all__ = [
     "ActorCritic",
+    "ActorCriticVisual",
     "ActorCriticRecurrent",
     "EmpiricalNormalization",
     "RandomNetworkDistillation",
     "StudentTeacher",
     "StudentTeacherRecurrent",
+    "StudentTeacherVisual"
 ]
