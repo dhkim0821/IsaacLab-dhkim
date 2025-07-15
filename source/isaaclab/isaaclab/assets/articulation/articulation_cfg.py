@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2025, The Isaac Lab Project Developers.
+# Copyright (c) 2022-2025, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
 # All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -38,14 +38,23 @@ class ArticulationCfg(AssetBaseCfg):
 
     class_type: type = Articulation
 
+    articulation_root_prim_path: str | None = None
+    """Path to the articulation root prim in the USD file.
+
+    If not provided will search for a prim with the ArticulationRootAPI. Should start with a slash.
+    """
+
     init_state: InitialStateCfg = InitialStateCfg()
     """Initial state of the articulated object. Defaults to identity pose with zero velocity and zero joint state."""
 
     soft_joint_pos_limit_factor: float = 1.0
-    """Fraction specifying the range of DOF position limits (parsed from the asset) to use. Defaults to 1.0.
+    """Fraction specifying the range of joint position limits (parsed from the asset) to use. Defaults to 1.0.
 
-    The joint position limits are scaled by this factor to allow for a limited range of motion.
-    This is accessible in the articulation data through :attr:`ArticulationData.soft_joint_pos_limits` attribute.
+    The soft joint position limits are scaled by this factor to specify a safety region within the simulated
+    joint position limits. This isn't used by the simulation, but is useful for learning agents to prevent the joint
+    positions from violating the limits, such as for termination conditions.
+
+    The soft joint position limits are accessible through the :attr:`ArticulationData.soft_joint_pos_limits` attribute.
     """
 
     actuators: dict[str, ActuatorBaseCfg] = MISSING

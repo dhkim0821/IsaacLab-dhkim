@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2025, The Isaac Lab Project Developers.
+# Copyright (c) 2022-2025, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
 # All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -53,7 +53,6 @@ import os
 import time
 import torch
 
-from isaaclab_rl.rl_games import RlGamesGpuEnv, RlGamesVecEnvWrapper
 from rl_games.common import env_configurations, vecenv
 from rl_games.common.player import BasePlayer
 from rl_games.torch_runner import Runner
@@ -63,12 +62,17 @@ from isaaclab.utils.assets import retrieve_file_path
 from isaaclab.utils.dict import print_dict
 from isaaclab.utils.pretrained_checkpoint import get_published_pretrained_checkpoint
 
+from isaaclab_rl.rl_games import RlGamesGpuEnv, RlGamesVecEnvWrapper
+
 import isaaclab_tasks  # noqa: F401
 from isaaclab_tasks.utils import get_checkpoint_path, load_cfg_from_registry, parse_env_cfg
+
+# PLACEHOLDER: Extension template (do not remove this comment)
 
 
 def main():
     """Play with RL-Games agent."""
+    task_name = args_cli.task.split(":")[-1]
     # parse env configuration
     env_cfg = parse_env_cfg(
         args_cli.task, device=args_cli.device, num_envs=args_cli.num_envs, use_fabric=not args_cli.disable_fabric
@@ -81,7 +85,7 @@ def main():
     print(f"[INFO] Loading experiment from directory: {log_root_path}")
     # find checkpoint
     if args_cli.use_pretrained_checkpoint:
-        resume_path = get_published_pretrained_checkpoint("rl_games", args_cli.task)
+        resume_path = get_published_pretrained_checkpoint("rl_games", task_name)
         if not resume_path:
             print("[INFO] Unfortunately a pre-trained checkpoint is currently unavailable for this task.")
             return
@@ -149,7 +153,7 @@ def main():
     agent.restore(resume_path)
     agent.reset()
 
-    dt = env.unwrapped.physics_dt
+    dt = env.unwrapped.step_dt
 
     # reset environment
     obs = env.reset()
@@ -184,7 +188,7 @@ def main():
                         s[:, dones, :] = 0.0
         if args_cli.video:
             timestep += 1
-            # Exit the play loop after recording one video
+            # exit the play loop after recording one video
             if timestep == args_cli.video_length:
                 break
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2025, The Isaac Lab Project Developers.
+# Copyright (c) 2022-2025, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
 # All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -63,14 +63,14 @@ class MySceneCfg(InteractiveSceneCfg):
     # robots
     robot: ArticulationCfg = MISSING
     # sensors
-    #height_scanner = RayCasterCfg(
-    #    prim_path="{ENV_REGEX_NS}/Robot/base",
-    #    offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
-    #    attach_yaw_only=True,
-    #    pattern_cfg=patterns.GridPatternCfg(resolution=0.1, size=[1.6, 1.0]),
-    #    debug_vis=False,
-    #    mesh_prim_paths=["/World/ground"],
-    #)
+    height_scanner = RayCasterCfg(
+        prim_path="{ENV_REGEX_NS}/Robot/base",
+        offset=RayCasterCfg.OffsetCfg(pos=(0.0, 0.0, 20.0)),
+        ray_alignment="yaw",
+        pattern_cfg=patterns.GridPatternCfg(resolution=0.1, size=[1.6, 1.0]),
+        debug_vis=False,
+        mesh_prim_paths=["/World/ground"],
+    )
     contact_forces = ContactSensorCfg(prim_path="{ENV_REGEX_NS}/Robot/.*", history_length=3, track_air_time=True)
 
     #tiled_camera = TiledCameraCfg(
@@ -182,6 +182,15 @@ class EventCfg:
             "asset_cfg": SceneEntityCfg("robot", body_names="base"),
             "mass_distribution_params": (-5.0, 5.0),
             "operation": "add",
+        },
+    )
+
+    base_com = EventTerm(
+        func=mdp.randomize_rigid_body_com,
+        mode="startup",
+        params={
+            "asset_cfg": SceneEntityCfg("robot", body_names="base"),
+            "com_range": {"x": (-0.05, 0.05), "y": (-0.05, 0.05), "z": (-0.01, 0.01)},
         },
     )
 
@@ -313,7 +322,6 @@ class LocomotionVelocityRoughEnvCfg(ManagerBasedRLEnvCfg):
         # simulation settings
         self.sim.dt = 0.005
         self.sim.render_interval = self.decimation
-        self.sim.disable_contact_processing = True
         self.sim.physics_material = self.scene.terrain.physics_material
         self.sim.physx.gpu_max_rigid_patch_count = 10 * 2**15
         # update sensor update periods

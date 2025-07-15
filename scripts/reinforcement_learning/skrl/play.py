@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2025, The Isaac Lab Project Developers.
+# Copyright (c) 2022-2025, The Isaac Lab Project Developers (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md).
 # All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -69,7 +69,7 @@ import skrl
 from packaging import version
 
 # check for minimum supported skrl version
-SKRL_VERSION = "1.4.1"
+SKRL_VERSION = "1.4.2"
 if version.parse(skrl.__version__) < version.parse(SKRL_VERSION):
     skrl.logger.error(
         f"Unsupported skrl version: {skrl.__version__}. "
@@ -82,14 +82,16 @@ if args_cli.ml_framework.startswith("torch"):
 elif args_cli.ml_framework.startswith("jax"):
     from skrl.utils.runner.jax import Runner
 
-from isaaclab_rl.skrl import SkrlVecEnvWrapper
-
 from isaaclab.envs import DirectMARLEnv, multi_agent_to_single_agent
 from isaaclab.utils.dict import print_dict
 from isaaclab.utils.pretrained_checkpoint import get_published_pretrained_checkpoint
 
+from isaaclab_rl.skrl import SkrlVecEnvWrapper
+
 import isaaclab_tasks  # noqa: F401
 from isaaclab_tasks.utils import get_checkpoint_path, load_cfg_from_registry, parse_env_cfg
+
+# PLACEHOLDER: Extension template (do not remove this comment)
 
 # config shortcuts
 algorithm = args_cli.algorithm.lower()
@@ -101,14 +103,16 @@ def main():
     if args_cli.ml_framework.startswith("jax"):
         skrl.config.jax.backend = "jax" if args_cli.ml_framework == "jax" else "numpy"
 
+    task_name = args_cli.task.split(":")[-1]
+
     # parse configuration
     env_cfg = parse_env_cfg(
         args_cli.task, device=args_cli.device, num_envs=args_cli.num_envs, use_fabric=not args_cli.disable_fabric
     )
     try:
-        experiment_cfg = load_cfg_from_registry(args_cli.task, f"skrl_{algorithm}_cfg_entry_point")
+        experiment_cfg = load_cfg_from_registry(task_name, f"skrl_{algorithm}_cfg_entry_point")
     except ValueError:
-        experiment_cfg = load_cfg_from_registry(args_cli.task, "skrl_cfg_entry_point")
+        experiment_cfg = load_cfg_from_registry(task_name, "skrl_cfg_entry_point")
 
     # specify directory for logging experiments (load checkpoint)
     log_root_path = os.path.join("logs", "skrl", experiment_cfg["agent"]["experiment"]["directory"])
@@ -116,7 +120,7 @@ def main():
     print(f"[INFO] Loading experiment from directory: {log_root_path}")
     # get checkpoint path
     if args_cli.use_pretrained_checkpoint:
-        resume_path = get_published_pretrained_checkpoint("skrl", args_cli.task)
+        resume_path = get_published_pretrained_checkpoint("skrl", task_name)
         if not resume_path:
             print("[INFO] Unfortunately a pre-trained checkpoint is currently unavailable for this task.")
             return
@@ -135,11 +139,11 @@ def main():
     if isinstance(env.unwrapped, DirectMARLEnv) and algorithm in ["ppo"]:
         env = multi_agent_to_single_agent(env)
 
-    # get environment (physics) dt for real-time evaluation
+    # get environment (step) dt for real-time evaluation
     try:
-        dt = env.physics_dt
+        dt = env.step_dt
     except AttributeError:
-        dt = env.unwrapped.physics_dt
+        dt = env.unwrapped.step_dt
 
     # wrap for video recording
     if args_cli.video:
@@ -179,7 +183,12 @@ def main():
         with torch.inference_mode():
             # agent stepping
             outputs = runner.agent.act(obs, timestep=0, timesteps=0)
-            actions = outputs[-1].get("mean_actions", outputs[0])
+            # - multi-agent (deterministic) actions
+            if hasattr(env, "possible_agents"):
+                actions = {a: outputs[-1][a].get("mean_actions", outputs[0][a]) for a in env.possible_agents}
+            # - single-agent (deterministic) actions
+            else:
+                actions = outputs[-1].get("mean_actions", outputs[0])
             # env stepping
             obs, _, _, _, _ = env.step(actions)
         if args_cli.video:

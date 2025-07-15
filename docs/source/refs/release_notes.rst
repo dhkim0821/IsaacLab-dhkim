@@ -1,8 +1,291 @@
 Release Notes
-=============
+#############
 
 The release notes are now available in the `Isaac Lab GitHub repository <https://github.com/isaac-sim/IsaacLab/releases>`_.
 We summarize the release notes here for convenience.
+
+v2.1.0
+======
+
+Overview
+--------
+
+This release introduces the official support for teleoperation using the Apple Vision Pro for collecting high-quality
+and dexterous hand data, including the addition of bi-manual teleoperation and imitation learning workflows through Isaac Lab Mimic.
+
+We have also introduced new randomization methods for USD attributes, including the randomization of
+scale, color, and textures. In this release, we updated RSL RL to v2.3.1, which introduces many additional features
+including distributed training, student-teacher distillation, and recurrent student-teacher distillation.
+
+Additionally, we revamped the `Extension Template <https://github.com/isaac-sim/IsaacLabExtensionTemplate>`_
+to include an automatic template generator tool from within the Isaac Lab repo. The extension template is
+a powerful method for users to develop new projects in user-hosted repos, allowing for isolation from the core
+Isaac Lab repo and changes. The previous IsaacLabExtensionTemplate repo showed a limited example pertaining only
+to the Manager-based workflow and RSL RL. In the new template generator, users can choose from any supported
+workflow and RL library, along with the desired RL algorithm. We will be deprecating the standalone
+`IsaacLabExtensionTemplate <https://github.com/isaac-sim/IsaacLabExtensionTemplate>`_ in the near future.
+
+NVIDIA has also released `HOVER <https://github.com/NVlabs/HOVER>`_ as an independent repo, hosting a neural whole body
+controller for humanoids built on top of Isaac Lab. HOVER includes sim-to-real workflows for deployment on the Unitree
+H1 robot, which we have also added a tutorial guide for the deployment process in the Isaac Lab documentation.
+
+**Full Changelog**: https://github.com/isaac-sim/IsaacLab/compare/v2.0.2...v2.1.0
+
+New Features
+------------
+
+* Adds new external project / internal task template generator by @Toni-SM in https://github.com/isaac-sim/IsaacLab/pull/2039
+* Adds dummy agents to the external task template generator by @louislelay in https://github.com/isaac-sim/IsaacLab/pull/2221
+* Adds USD-level randomization mode to event manager by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2040
+* Adds texture and scale randomization event terms by @hapatel-bdai in https://github.com/isaac-sim/IsaacLab/pull/2121
+* Adds replicator event for randomizing colors by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2153
+* Adds interactive demo script for H1 locomotion by @kellyguo11 in https://github.com/isaac-sim/IsaacLab/pull/2041
+* Adds blueprint environment for Franka stacking mimic by @chengronglai in https://github.com/isaac-sim/IsaacLab/pull/1944
+* Adds action clipping to rsl-rl wrapper by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2019
+* Adds Gymnasium spaces showcase tasks by @Toni-SM in https://github.com/isaac-sim/IsaacLab/pull/2109
+* Add configs and adapt exporter for RSL-RL distillation by @ClemensSchwarke in https://github.com/isaac-sim/IsaacLab/pull/2182
+* Adds support for head pose for Open XR device by @rwiltz
+* Adds handtracking joints and retargetting pipeline by @rwiltz
+* Adds documentation for openxr device and retargeters by @rwiltz
+* Adds tutorial for training & validating HOVER policy using Isaac Lab by @pulkitg01
+* Adds rendering mode presets by @matthewtrepte
+* Adds GR1 scene with Pink IK + Groot Mimic data generation and training by @ashwinvkNV
+* Adds absolute pose franka cube stacking environment for mimic by @rwiltz
+* Enables CloudXR OpenXR runtime container by @jaczhangnv
+* Adds a quick start guide for quick installation and introduction by @mpgussert
+
+Improvements
+------------
+
+* Clarifies the default parameters in ArticulationData by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/1875
+* Removes storage of meshes inside the TerrainImporter class by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/1987
+* Adds more details about state in InteractiveScene by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2119
+* Mounts scripts to docker container by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2152
+* Initializes manager term classes only when sim starts by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2117
+* Updates to latest RSL-RL v2.3.0 release by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2154
+* Skips dependency installation for directories with no extension.toml by @jsmith-bdai in https://github.com/isaac-sim/IsaacLab/pull/2216
+* Clarifies layer instructions in animation docs by @tylerlum in https://github.com/isaac-sim/IsaacLab/pull/2240
+* Lowers the default number of environments for camera envs by @kellyguo11 in https://github.com/isaac-sim/IsaacLab/pull/2287
+* Updates Rendering Mode guide in documentation by @matthewtrepte
+* Adds task instruction UI support for mimic by @chengronglai
+* Adds ExplicitAction class to track argument usage in AppLauncher by @nv-mhaselton
+* Allows physics reset during simulation by @oahmednv
+* Updates mimic to support multi-eef (DexMimicGen) data generation by @nvcyc
+
+Bug Fixes
+---------
+
+* Fixes default effort limit behavior for implicit actuators by @jtigue-bdai in https://github.com/isaac-sim/IsaacLab/pull/2098
+* Fixes docstrings inconsistencies the code by @Bardreamaster in https://github.com/isaac-sim/IsaacLab/pull/2112
+* Fixes missing stage recorder extension for animation recorder by @kellyguo11 in https://github.com/isaac-sim/IsaacLab/pull/2125
+* Fixes ground height in factory environment by @louislelay in https://github.com/isaac-sim/IsaacLab/pull/2071
+* Removes double definition of render settings by @pascal-roth in https://github.com/isaac-sim/IsaacLab/pull/2083
+* Fixes device settings in env tutorials by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2151
+* Changes default ground color back to dark grey by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2164
+* Initializes extras dict before loading managers by @kousheekc in https://github.com/isaac-sim/IsaacLab/pull/2178
+* Fixes typos in development.rst by @vi3itor in https://github.com/isaac-sim/IsaacLab/pull/2181
+* Fixes SE gamepad omniverse subscription API by @PinkPanther-ny in https://github.com/isaac-sim/IsaacLab/pull/2173
+* Fixes modify_action_space in RslRlVecEnvWrapper by @felipemohr in https://github.com/isaac-sim/IsaacLab/pull/2185
+* Fixes distributed setup in benchmarking scripts by @kellyguo11 in https://github.com/isaac-sim/IsaacLab/pull/2194
+* Fixes typo ``RF_FOOT`` to ``RH_FOOT`` in tutorials by @likecanyon in https://github.com/isaac-sim/IsaacLab/pull/2200
+* Checks if success term exists before recording in RecorderManager by @peterd-NV in https://github.com/isaac-sim/IsaacLab/pull/2218
+* Unsubscribes from debug vis handle when timeline is stopped by @jsmith-bdai in https://github.com/isaac-sim/IsaacLab/pull/2214
+* Fixes wait time in ``play.py`` by using ``env.step_dt`` by @tylerlum in https://github.com/isaac-sim/IsaacLab/pull/2239
+* Fixes 50 series installation instruction to include torchvision by @kellyguo11 in https://github.com/isaac-sim/IsaacLab/pull/2258
+* Fixes importing MotionViewer from external scripts by @T-K-233 in https://github.com/isaac-sim/IsaacLab/pull/2195
+* Resets cuda device after each app.update call by @kellyguo11 in https://github.com/isaac-sim/IsaacLab/pull/2283
+* Fixes resume flag in rsl-rl cli args by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/2299
+
+
+v2.0.2
+======
+
+Overview
+--------
+
+This patch release focuses on improving actuator configuration and fixing key bugs while reverting unintended
+behavioral changes from v2.0.1. **We strongly recommend switching** to this new version if you're migrating
+from a pre-2.0 release of Isaac Lab.
+
+**Key Changes:**
+
+* **Actuator Limit Handling**: Introduced :attr:`~isaaclab.actuators.ActuatorBaseCfg.velocity_limit_sim`
+  and :attr:`~isaaclab.actuators.ActuatorBaseCfg.effort_limit_sim` to clearly distinguish
+  simulation solver limits from actuator model constraints. Reverted implicit actuator velocity limits
+  to pre-v2.0 behavior
+* **Simulation configuration update**: Removed :attr:`~isaaclab.sim.SimulationCfg.disable_contact_processing`
+  flag to simplify behavior
+* **Rendering configuration update**: Reverted to pre-2.0 configuration to improve the quality of the
+  render product
+* **Tiled camera fixes**: Fixed motion vector processing and added a hotfix for retrieving semantic
+  images from the :class:`~isaaclab.sensors.TiledCamera`
+* **WebRTC Support**: Added IP specification for live-streaming
+
+**Full Changelog**: https://github.com/isaac-sim/IsaacLab/compare/v2.0.1...v2.0.2
+
+New Features
+------------
+
+* Adds :attr:`~isaaclab.actuators.ActuatorBaseCfg.velocity_limit_sim` and
+  :attr:`~isaaclab.actuators.ActuatorBaseCfg.effort_limit_sim` to actuator.
+* Adds WebRTC livestreaming support with IP specification.
+
+Improvements
+------------
+
+* Adds guidelines and examples for code contribution
+* Separates joint state setters inside Articulation class
+* Implements deterministic evaluation for skrl's multi-agent algorithms
+* Adds new extensions to ``pyproject.toml``
+* Updates docs on Isaac Sim binary installation path and VSCode integration
+* Removes remaining deprecation warning in RigidObject deprecation
+* Adds security and show&tell notes to documentation
+* Updates docs for segmentation and 50 series GPUs
+* Adds workaround for semantic segmentation issue with tiled camera
+
+Bug Fixes
+---------
+
+* Fixes offset from object obs for Franka stacking env when using parallel envs
+* Adds scene update to ManagerBasedEnv, DirectRLEnv, and MARL envs initialization
+* Loads actuator networks in eval() mode to prevent gradients
+* Fixes instructions on importing ANYmal URDF in docs
+* Fixes setting of root velocities in the event term :func:`~isaaclab.mdp.reset_root_state_from_terrain`
+* Fixes ``activate_contact_sensors`` when using :class:`~isaaclab.sim.MultiUsdFileCfg`
+* Fixes misalignment in motion vectors from :class:`~isaaclab.sim.TiledCamera`
+* Sets default tensor device to CPU for Camera rot buffer
+
+Breaking Changes
+----------------
+
+* Reverts the setting of joint velocity limits for implicit actuators
+* Removes ``disable_contact_processing`` flag from SimulationContext
+* Reverts to old render settings in kit experience files
+
+Migration Guide
+---------------
+
+.. attention::
+
+    We strongly recommend reviewing the details to fully understand the change in behavior,
+    as it may impact the deployment of learned policies. Please open an issue on GitHub if
+    you face any problems.
+
+
+Introduction of simulation's effort and velocity limits parameters in ActuatorBaseCfg
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We have introduced the configuration variables :attr:`~isaaclab.actuators.ActuatorBaseCfg.velocity_limit_sim`
+and :attr:`~isaaclab.actuators.ActuatorBaseCfg.effort_limit_sim` to the
+:class:`isaaclab.actuators.ActuatorBaseCfg` to allow users to set the **simulation** joint velocity
+and effort limits through the actuator configuration class.
+
+Previously, we were overusing the attributes :attr:`~isaaclab.actuators.ActuatorBaseCfg.velocity_limit`
+and :attr:`~isaaclab.actuators.ActuatorBaseCfg.effort_limit` inside the actuator configuration. A series
+of changes in-between led to a regression from v1.4.0 to v2.0.1 release of IsaacLab. To make this
+clearer to understand, we note the change in their behavior in a tabular form:
+
++---------------+-------------------------+--------------------------------------------------------------------+----------------------------------------------------------------+
+| Actuator Type | Attribute               | v1.4.0 Behavior                                                    | v2.0.1 Behavior                                                |
++---------------+-------------------------+--------------------------------------------------------------------+----------------------------------------------------------------+
+| Implicit      | :attr:`velocity_limit`  | Ignored, not set into simulation                                   | Set into simulation                                            |
+| Implicit      | :attr:`effort_limit`    | Set into simulation                                                | Set into simulation                                            |
+| Explicit      | :attr:`velocity_limit`  | Used by actuator models (e.g., DC Motor), not set into simulation  | Used by actuator models (e.g., DC Motor), set into simulation  |
+| Explicit      | :attr:`effort_limit`    | Used by actuator models, not set into simulation                   | Used by actuator models, set into simulation                   |
++---------------+-------------------------+--------------------------------------------------------------------+----------------------------------------------------------------+
+
+Setting the limits from the configuration into the simulation directly affects the behavior
+of the underlying physics engine solver. This impact is particularly noticeable when velocity
+limits are too restrictive, especially in joints with high stiffness, where it becomes easier
+to reach these limits. As a result, the change in behavior caused previously trained policies
+to not function correctly in IsaacLab v2.0.1.
+
+Consequently, we have reverted back to the prior behavior and added :attr:`velocity_limit_sim` and
+:attr:`effort_limit_sim` attributes to make it clear that setting those parameters means
+changing solver's configuration. The new behavior is as follows:
+
++----------------------------+--------------------------------------------------------+-------------------------------------------------------------+
+| Attribute                  | Implicit Actuator                                      | Explicit Actuator                                           |
++============================+========================================================+=============================================================+
+| :attr:`velocity_limit`     | Ignored, not set into simulation                       | Used by the model (e.g., DC Motor), not set into simulation |
+| :attr:`effort_limit`       | Set into simulation (same as :attr:`effort_limit_sim`) | Used by the models, not set into simulation                 |
+| :attr:`velocity_limit_sim` | Set into simulation                                    | Set into simulation                                         |
+| :attr:`effort_limit_sim`   | Set into simulation (same as :attr:`effort_limit`)     | Set into simulation                                         |
++----------------------------+--------------------------------------------------------+-------------------------------------------------------------+
+
+Users are advised to use the ``xxx_sim`` flag if they want to directly modify the solver limits.
+
+Removal of ``disable_contact_processing`` flag in ``SimulationCfg``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We have now removed the ``disable_contact_processing`` flag from the :class:`isaaclab.sim.SimulationCfg`
+to not have the user worry about these intricacies of the simulator. The flag is always True by
+default unless a contact sensor is created (which will internally set this flag to False).
+
+Previously, the flag ``disable_contact_processing`` led to confusion about its
+behavior. As the name suggests, the flag controls the contact reporting from the
+underlying physics engine, PhysX. Disabling this flag (note the double negation)
+means that PhysX collects the contact information from its solver and allows
+reporting them to the user. Enabling this flag means this operation is not performed and
+the overhead of it is avoided.
+
+Many of our examples (for instance, the locomotion environments) were setting this
+flag to True which meant the contacts should **not** get reported. However, this issue
+was not noticed earlier since GPU simulation bypasses this flag, and only CPU simulation
+gets affected. Running the same examples on CPU device led to different behaviors
+because of this reason.
+
+Existing users, who currently set this flag themselves, should receive a deprecated
+warning mentioning the removal of this flag and the switch to the new default behavior.
+
+Switch to older rendering settings to improve render quality
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With the IsaacLab 2.0.0 release, we switched to new render settings aimed at improving
+tiled-rendering performance, but at the cost of reduced rendering quality. This change
+particularly affected dome lighting in the scene, which is the default in many of our examples.
+
+As reported by several users, this change negatively impacted render quality, even in
+cases where it wasn’t necessary (such as when recording videos of the simulation). In
+response to this feedback, we have reverted to the previous render settings by default
+to restore the quality users expected.
+
+For users looking to trade render quality for speed, we will provide guidelines in the future.
+
+
+v2.0.1
+======
+
+Overview
+--------
+
+This release contains a small set of fixes and improvements.
+
+The main change was to maintain combability with the updated library name for RSL RL, which breaks the previous installation methods for Isaac Lab. This release provides the necessary fixes and updates in Isaac Lab to accommodate for the name change and maintain combability with installation for RSL RL.
+
+**Full Changelog**: https://github.com/isaac-sim/IsaacLab/compare/v2.0.0...v2.0.1
+
+Improvements
+------------
+
+* Switches to RSL-RL install from PyPI by @Mayankm96 in https://github.com/isaac-sim/IsaacLab/pull/1811
+* Updates the script path in the document by @fan-ziqi in https://github.com/isaac-sim/IsaacLab/pull/1766
+* Disables extension auto-reload when saving files by @kellyguo11 in https://github.com/isaac-sim/IsaacLab/pull/1788
+* Updates documentation for v2.0.1 installation by @kellyguo11 in https://github.com/isaac-sim/IsaacLab/pull/1818
+
+Bug Fixes
+---------
+
+* Fixes timestamp of com and link buffers when writing articulation pose to sim by @Jackkert in https://github.com/isaac-sim/IsaacLab/pull/1765
+* Fixes incorrect local documentation preview path in xdg-open command by @louislelay in https://github.com/isaac-sim/IsaacLab/pull/1776
+* Fixes no matching distribution found for rsl-rl (unavailable) by @samibouziri in https://github.com/isaac-sim/IsaacLab/pull/1808
+* Fixes reset of sensor drift inside the RayCaster sensor by @zoctipus in https://github.com/isaac-sim/IsaacLab/pull/1821
+
+New Contributors
+----------------
+
+* @Jackkert made their first contribution in https://github.com/isaac-sim/IsaacLab/pull/1765
+
 
 v2.0.0
 ======
@@ -80,6 +363,14 @@ Breaking Changes
 * Renames Isaac Lab extensions and folders by @kellyguo11
 * Restructures extension folders and removes old imitation learning scripts by @kellyguo11
 * Renames default conda and venv Python environment from ``isaaclab`` to ``env_isaaclab`` by @Toni-SM
+
+.. attention::
+
+	We have identified a breaking feature for semantic segmentation and instance segmentation when using
+	``Camera`` and ``TiledCamera`` with instanceable assets. Since the Isaac Sim 4.5 / Isaac Lab 2.0 release, semantic and instance
+	segmentation outputs only render the first tile correctly and produces blank outputs for the remaining tiles.
+	We will be introducing a workaround for this fix to remove scene instancing if semantic segmentation or instance
+	segmentation is required for ``Camera`` and ``TiledCamera`` until we receive a proper fix from Omniverse as part of the next Isaac Sim release.
 
 Migration Guide
 ---------------
