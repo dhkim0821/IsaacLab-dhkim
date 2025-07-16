@@ -1,0 +1,219 @@
+<robot name="Prestoe2D">
+	<link name="link1_1">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="0.00000"/>
+			<inertia ixx="0.00000" ixy="0" ixz="0" iyy="0.00000" iyz="0" izz="0.00000"/>
+		</inertial>
+	</link>
+	<link name="link1_2">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="0.00000"/>
+			<inertia ixx="0.00000" ixy="0" ixz="0" iyy="0.00000" iyz="0" izz="0.00000"/>
+		</inertial>
+	</link>
+	<link name="link1_3">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="0.00000"/>
+			<inertia ixx="0.00000" ixy="0" ixz="0" iyy="0.00000" iyz="0" izz="0.00000"/>
+		</inertial>
+	</link>
+	<link name="link1_4">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="0.00000"/>
+			<inertia ixx="0.00000" ixy="0" ixz="0" iyy="0.00000" iyz="0" izz="0.00000"/>
+		</inertial>
+	</link>
+  <link name="torso">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="9.13366"/>
+			<inertia ixx="0.32668" ixy="0" ixz="0" iyy="0.32668" iyz="0" izz="0.02984"/>
+		</inertial>
+		<visual>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.04000"/>
+			<geometry>
+				<capsule length="0.50000" radius="0.07000"/>
+			</geometry>
+		</visual>
+		<collision>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.04000"/>
+			<geometry>
+				<capsule length="0.50000" radius="0.07000"/>
+			</geometry>
+		</collision>
+	</link>
+	<link name="r_thigh">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="3.25678"/>
+			<inertia ixx="0.05718" ixy="0" ixz="0" iyy="0.05718" iyz="0" izz="0.00543"/>
+		</inertial>
+		<visual>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.17400"/>
+			<geometry>
+				<capsule length="0.34800" radius="0.05000"/>
+			</geometry>
+		</visual>
+    <collision>
+      <origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.17400" />
+			<geometry>
+				<capsule length="0.34800" radius="0.05000"/>
+			</geometry>
+		</collision>
+	</link>
+	<link name="r_leg">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="2.05251"/>
+			<inertia ixx="0.03346" ixy="0" ixz="0" iyy="0.03346" iyz="0" izz="0.00219"/>
+		</inertial>
+		<visual>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.17750"/>
+			<geometry>
+				<capsule length="0.35500" radius="0.04000"/>
+			</geometry>
+		</visual>
+		<collision>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.17750"/>
+			<geometry>
+				<capsule length="0.35500" radius="0.04000"/>
+			</geometry>
+		</collision>
+	</link>
+	<link name="r_foot">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="3.16673"/>
+			<inertia ixx="0.00760" ixy="0" ixz="0" iyy="0.03082" iyz="0" izz="0.03082"/>
+		</inertial>
+		<visual>
+			<origin rpy="0.00000 -1.57080 0.00000" xyz="0.05000 0.00000 -0.08000"/>
+			<geometry>
+				<capsule length="0.20000" radius="0.06000"/>
+			</geometry>
+		</visual>
+		<collision>
+			<origin rpy="0.00000 -1.57080 0.00000" xyz="0.05000 0.00000 -0.08000"/>
+			<geometry>
+				<capsule length="0.20000" radius="0.06000"/>
+			</geometry>
+		</collision>
+	</link>
+	<link name="l_thigh">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="3.25678"/>
+			<inertia ixx="0.05718" ixy="0" ixz="0" iyy="0.05718" iyz="0" izz="0.00543"/>
+		</inertial>
+		<visual>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.17400"/>
+			<geometry>
+				<capsule length="0.34800" radius="0.05000"/>
+			</geometry>
+		</visual>
+		<collision>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.17400"/>
+			<geometry>
+				<capsule length="0.34800" radius="0.05000"/>
+			</geometry>
+		</collision>
+	</link>
+	<link name="l_leg">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="2.05251"/>
+			<inertia ixx="0.03346" ixy="0" ixz="0" iyy="0.03346" iyz="0" izz="0.00219"/>
+		</inertial>
+		<visual>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.17750"/>
+			<geometry>
+				<capsule length="0.35500" radius="0.04000"/>
+			</geometry>
+		</visual>
+		<collision>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.17750"/>
+			<geometry>
+				<capsule length="0.35500" radius="0.04000"/>
+			</geometry>
+		</collision>
+	</link>
+	<link name="l_foot">
+		<inertial>
+			<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+			<mass value="3.16673"/>
+			<inertia ixx="0.00760" ixy="0" ixz="0" iyy="0.03082" iyz="0" izz="0.03082"/>
+		</inertial>
+		<visual>
+			<origin rpy="0.00000 -1.57080 0.00000" xyz="0.05000 0.00000 -0.08000"/>
+			<geometry>
+				<capsule length="0.20000" radius="0.06000"/>
+			</geometry>
+		</visual>
+		<collision>
+			<origin rpy="0.00000 -1.57080 0.00000" xyz="0.05000 0.00000 -0.08000"/>
+			<geometry>
+				<capsule length="0.20000" radius="0.06000"/>
+			</geometry>
+		</collision>
+	</link>
+
+  <!-- Joints -->
+	<joint name="rootx" type="prismatic">
+		<parent link="link1_1"/>
+		<child link="link1_2"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+		<axis xyz="1.00000 0.00000 0.00000"/>
+	</joint>
+	<joint name="rootz" type="prismatic">
+		<parent link="link1_2"/>
+		<child link="link1_3"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+		<axis xyz="0.00000 0.00000 1.00000"/>
+	</joint>
+	<joint name="rooty" type="continuous">
+		<parent link="link1_3"/>
+		<child link="torso"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 0.00000"/>
+		<axis xyz="0.00000 1.00000 0.00000"/>
+	</joint>
+	<joint name="r_hip" type="revolute">
+		<parent link="torso"/>
+		<child link="r_thigh"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.21000"/>
+		<axis xyz="0.00000 1.00000 0.00000"/>
+	</joint>
+	<joint name="r_knee" type="revolute">
+		<parent link="r_thigh"/>
+		<child link="r_leg"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.34800"/>
+		<axis xyz="0.00000 1.00000 0.00000"/>
+	</joint>
+	<joint name="r_ankle" type="revolute">
+		<parent link="r_leg"/>
+		<child link="r_foot"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.35500"/>
+		<axis xyz="0.00000 1.00000 0.00000"/>
+	</joint>
+	<joint name="l_hip" type="revolute">
+		<parent link="torso"/>
+		<child link="l_thigh"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.21000"/>
+		<axis xyz="0.00000 1.00000 0.00000"/>
+	</joint>
+	<joint name="l_knee" type="revolute">
+		<parent link="l_thigh"/>
+		<child link="l_leg"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.34800"/>
+		<axis xyz="0.00000 1.00000 0.00000"/>
+	</joint>
+	<joint name="l_ankle" type="revolute">
+		<parent link="l_leg"/>
+		<child link="l_foot"/>
+		<origin rpy="0.00000 -0.00000 0.00000" xyz="0.00000 0.00000 -0.35500"/>
+		<axis xyz="0.00000 1.00000 0.00000"/>
+	</joint>
+</robot>

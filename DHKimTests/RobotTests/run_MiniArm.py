@@ -76,10 +76,10 @@ def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
     diff_ik_controller = DifferentialIKController(diff_ik_cfg, num_envs=scene.num_envs, device=sim.device)
 
     # Markers
-    frame_marker_cfg = MINI_ARM_CFG.copy()
-    frame_marker_cfg.markers["frame"].scale = (0.1, 0.1, 0.1)
-    ee_marker = VisualizationMarkers(frame_marker_cfg.replace(prim_path="/Visuals/ee_current"))
-    goal_marker = VisualizationMarkers(frame_marker_cfg.replace(prim_path="/Visuals/ee_goal"))
+    # frame_marker_cfg = MINI_ARM_CFG.copy()
+    # frame_marker_cfg.markers["frame"].scale = (0.1, 0.1, 0.1)
+    # ee_marker = VisualizationMarkers(frame_marker_cfg.replace(prim_path="/Visuals/ee_current"))
+    # goal_marker = VisualizationMarkers(frame_marker_cfg.replace(prim_path="/Visuals/ee_goal"))
 
     # Define goals for the arm
     ee_goals = [
@@ -136,11 +136,11 @@ def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
             root_pose_w = robot.data.root_state_w[:, 0:6]
             joint_pos = robot.data.joint_pos[:, robot_entity_cfg.joint_ids]
             # compute frame in root frame
-            ee_pos_b, ee_quat_b = subtract_frame_transforms(
-                root_pose_w[:, 0:3], root_pose_w[:, 3:6], ee_pose_w[:, 0:3], ee_pose_w[:, 3:6]
-            )
+            # ee_pos_b, ee_quat_b = subtract_frame_transforms(
+            #     root_pose_w[:, 0:3], root_pose_w[:, 3:6], ee_pose_w[:, 0:3], ee_pose_w[:, 3:6]
+            # )
             # compute the joint commands
-            joint_pos_des = diff_ik_controller.compute(ee_pos_b, ee_quat_b, jacobian, joint_pos)
+            # joint_pos_des = diff_ik_controller.compute(ee_pos_b, ee_quat_b, jacobian, joint_pos)
 
         # apply actions
         robot.set_joint_position_target(joint_pos_des, joint_ids=robot_entity_cfg.joint_ids)
@@ -155,8 +155,8 @@ def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
         # obtain quantities from simulation
         ee_pose_w = robot.data.body_state_w[:, robot_entity_cfg.body_ids[0], 0:6]
         # update marker positions
-        ee_marker.visualize(ee_pose_w[:, 0:3], ee_pose_w[:, 3:6])
-        goal_marker.visualize(ik_commands[:, 0:3] + scene.env_origins, ik_commands[:, 3:6])
+        # ee_marker.visualize(ee_pose_w[:, 0:3], ee_pose_w[:, 3:6])
+        # goal_marker.visualize(ik_commands[:, 0:3] + scene.env_origins, ik_commands[:, 3:6])
 
 
 def main():
