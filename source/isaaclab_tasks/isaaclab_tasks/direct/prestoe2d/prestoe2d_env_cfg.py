@@ -39,7 +39,7 @@ class Prestoe2dEnvCfg(DirectRLEnvCfg):
     robot_cfg = Prestoe2D_CFG.replace(prim_path="/World/envs/env_.*/Robot")
 
     # scene
-    scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=500, env_spacing=2.0, replicate_physics=True)
+    scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=200, env_spacing=2.0, replicate_physics=True)
     # scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=30, env_spacing=2.0, replicate_physics=True)
 
     # custom parameters/scales
