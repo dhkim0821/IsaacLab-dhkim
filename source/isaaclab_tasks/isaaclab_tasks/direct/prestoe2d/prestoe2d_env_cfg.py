@@ -39,19 +39,25 @@ class Prestoe2dEnvCfg(DirectRLEnvCfg):
     robot_cfg = Prestoe2D_CFG.replace(prim_path="/World/envs/env_.*/Robot")
 
     # scene
-    scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=200, env_spacing=2.0, replicate_physics=True)
+    scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=500, env_spacing=2.0, replicate_physics=True)
     # scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=30, env_spacing=2.0, replicate_physics=True)
 
     # custom parameters/scales
     joint_dof_name: str = "l_hip", "r_hip", "l_knee", "r_knee", "l_ankle", "r_ankle"
     # - action scale
-    action_scale = 50.0  # [Nm]
+    action_scale = 1.0  # [Nm]
     # - reward scales
     rew_scale_alive = 1.0
     rew_scale_terminated = -5.0
     rew_scale_xvel = 2.0
     rew_scale_height_maintenance = 0.5
     rew_scale_jvel = -0.05
+   
+    # only when kkt loss is not used 
+    rew_scale_torque = -0.001
+    rew_scale_hip_symmetry = -0.01
+    rew_scale_pitch = -0.01
+    
     # rew_scale_imitation = -0.5
     rew_scale_imitation = 0.0
 
@@ -60,7 +66,7 @@ class Prestoe2dEnvCfg(DirectRLEnvCfg):
     initial_hip_range = [-0.3, 0.3]  
     initial_knee_range = [0, 0.5]
     initial_ankle_range = [-0.3, 0.3]
-    min_zpos = 0.75
+    min_zpos = 0.6
     max_jpos = 1.2  # max joint position
     
 @configclass

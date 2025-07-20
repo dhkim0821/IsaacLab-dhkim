@@ -56,7 +56,7 @@ class Prestoe2dEnv(DirectRLEnv):
         # add articulation to scene
         self.scene.articulations["robot"] = self.robot
         # add lights
-        light_cfg = sim_utils.DomeLightCfg(intensity=2000.0, color=(0.75, 0.75, 0.75))
+        light_cfg = sim_utils.DomeLightCfg(intensity=1000.0, color=(0.75, 0.75, 0.75))
         light_cfg.func("/World/Light", light_cfg)
 
     def _pre_physics_step(self, actions: torch.Tensor) -> None:
@@ -65,6 +65,7 @@ class Prestoe2dEnv(DirectRLEnv):
     def _apply_action(self) -> None:
         # print(f"Actions: {self.actions}, Action shape: {self.actions.shape}")
         self.robot.set_joint_effort_target(self.actions[:, :self._num_act_joints] * self.cfg.action_scale, joint_ids=self._act_joint_idx)
+        self.joint_torque = self.actions[:, :self._num_act_joints] * self.cfg.action_scale
 
     def _get_observations(self) -> dict:
         obs = torch.cat(
@@ -91,11 +92,15 @@ class Prestoe2dEnv(DirectRLEnv):
             self.cfg.rew_scale_height_maintenance,
             self.cfg.rew_scale_jvel,
             self.cfg.rew_scale_imitation,
+            self.cfg.rew_scale_torque,
+            self.cfg.rew_scale_hip_symmetry,
+            self.cfg.rew_scale_pitch,
             self.qpos_ref,
             self.episode_length_buf,
             self.ref_seq_scale,
             self.joint_pos,
             self.joint_vel,
+            self.joint_torque,
             self.reset_terminated,
         )
         return total_reward
@@ -170,11 +175,15 @@ def compute_rewards(
     rew_scale_height_maintenance: float,
     rew_scale_joint_vel: float,
     rew_scale_imitation: float,
+    rew_scale_torque: float,
+    rew_scale_hip_symmetry: float,
+    rew_scale_pitch: float,
     qpos_ref: torch.Tensor,
     episode_length_buf: torch.Tensor,
     ref_seq_scale: float,
     joint_pos: torch.Tensor,
     joint_vel: torch.Tensor,
+    joint_torque: torch.Tensor,
     reset_terminated: torch.Tensor,
 ):
     mask = (reset_terminated.float() < 0.5)
@@ -190,9 +199,15 @@ def compute_rewards(
 
 
     rew_forward_vel[mask] = rew_scale_xvel * torch.clamp(joint_vel[mask, 0], min=0, max=1.3)  # clamp to [0, 1.3] 
-    rew_height[mask] = rew_scale_height_maintenance * torch.clamp(joint_pos[mask, 1] - 0.6, min=0.0)
+    rew_height[mask] = rew_scale_height_maintenance * torch.clamp(joint_pos[mask, 1] - 0.45, min=0.0)
     
     rew_joint_vel = rew_scale_joint_vel * torch.sum(torch.abs(joint_vel[:, 3:]), dim=-1)
+
+    # when kkt loss is not used
+    rew_torque = rew_scale_torque * torch.sum(torch.abs(joint_torque), dim=-1)
+    # print(f"Joint torque: {joint_torque[0,:]}")
+    rew_pitch = rew_scale_pitch * torch.abs(joint_pos[:, 2])
+    rew_hip_symmetry = rew_scale_hip_symmetry * torch.abs(joint_pos[:,2]*2  + joint_pos[:, 3] + joint_pos[:, 4])
 
     # imitation reward
     ref_seq_len = qpos_ref.size(0)
@@ -202,7 +217,8 @@ def compute_rewards(
     # print(f"Reference index: {ref_idx[0]}, Phase: {phase[0]}, Episode length: {episode_length_buf[0]}, Ref seq scale: {ref_seq_scale}, ref seq len: {ref_seq_len}")
     rew_imitation = rew_scale_imitation * torch.sum(torch.abs(joint_pos[:, 3:] - qpos_ref[ref_idx, 3:]), dim=-1)
 
-    total_reward = rew_alive + rew_termination + rew_forward_vel + rew_height + rew_joint_vel + rew_imitation
+    total_reward = rew_alive + rew_termination + rew_forward_vel + rew_height + rew_joint_vel + rew_imitation + \
+        rew_torque + rew_pitch + rew_hip_symmetry
     # for i in range (3):
     #     print(f"Rewards: Alive: {rew_alive[i]}, Termination: {rew_termination[i]}, Forward Vel: {rew_forward_vel[i]}, Height: {rew_height[i]}, Joint Vel: {rew_joint_vel[i]}, Imitation: {rew_imitation[i]}")
 
