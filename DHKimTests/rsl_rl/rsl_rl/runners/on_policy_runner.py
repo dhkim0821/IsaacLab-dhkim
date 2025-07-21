@@ -10,6 +10,7 @@ import statistics
 import time
 import torch
 from collections import deque
+from rsl_rl.modules.conv2d import Conv2dHeadModel
 
 import rsl_rl as rsl_rl
 from rsl_rl.algorithms import PPO, Distillation
@@ -71,9 +72,27 @@ class OnPolicyRunner:
 
         # evaluate the policy class
         policy_class = eval(self.policy_cfg.pop("class_name"))
-        policy: ActorCritic | ActorCriticVisual | ActorCriticRecurrent | StudentTeacher | StudentTeacherVisual| StudentTeacherRecurrent = policy_class(
-            num_obs, num_privileged_obs, self.env.num_actions, **self.policy_cfg
-        ).to(self.device)
+
+        # Initialization
+        depth_image_flatten = 3072
+        visual_latent_size = 256  # or whatever your encoder outputs
+
+        if num_obs >= depth_image_flatten:
+            num_obs_new = num_obs - depth_image_flatten + visual_latent_size
+        else:
+            num_obs_new = num_obs
+
+        if num_privileged_obs >= depth_image_flatten:
+            num_privileged_obs_new = num_privileged_obs - depth_image_flatten + visual_latent_size
+        else:
+            num_privileged_obs_new = num_privileged_obs
+
+        policy: ActorCritic = policy_class(
+            num_obs_new, num_privileged_obs_new, self.env.num_actions, **self.policy_cfg
+        )
+        # policy: ActorCritic | ActorCriticVisual | ActorCriticRecurrent | StudentTeacher | StudentTeacherVisual| StudentTeacherRecurrent = policy_class(
+        #     num_obs, num_privileged_obs, self.env.num_actions, **self.policy_cfg
+        # ).to(self.device)
 
         # resolve dimension of rnd gated state
         if "rnd_cfg" in self.alg_cfg and self.alg_cfg["rnd_cfg"] is not None:
@@ -117,10 +136,23 @@ class OnPolicyRunner:
             self.training_type,
             self.env.num_envs,
             self.num_steps_per_env,
-            [num_obs],
-            [num_privileged_obs],
+            [num_obs_new],               
+            [num_privileged_obs_new],     
             [self.env.num_actions],
         )
+
+        #Conv2d
+        self.depth_image_size = (1, 48, 64)
+        self.depth_image_flatten = 3072
+        self.visual_latent_size = 256  # Should match what was used in ActorCriticVisual
+        self.visual_encoder = Conv2dHeadModel(
+            image_shape=self.depth_image_size,
+            output_size=self.visual_latent_size,
+            channels=[64, 64],
+            kernel_sizes=[3, 3],
+            strides=[1, 1],
+            hidden_sizes=[256],
+        ).to(self.device)
 
         # Decide whether to disable logging
         # We only log from the process with rank 0 (main process)
@@ -133,6 +165,23 @@ class OnPolicyRunner:
         self.current_learning_iteration = 0
         self.git_status_repos = [rsl_rl.__file__]
 
+    def process_obs(self, obs):
+        """
+        Split obs into non-visual and visual, run visual through conv, concat.
+        Assumes obs shape [num_envs, obs_dim] where last 3072 are image.
+        """
+        if obs.shape[-1] < self.depth_image_flatten:
+            return obs  # Nothing to split
+        non_visual = obs[..., :-self.depth_image_flatten]
+        visual = obs[..., -self.depth_image_flatten:]
+        # Reshape for conv2d [B, 1, 48, 64]
+        visual = visual.view(-1, *self.depth_image_size)
+        with torch.no_grad():  # Encoder is fixed or not trained in this loop
+            visual_latent = self.visual_encoder(visual)
+        # Concatenate along last dim
+        obs_processed = torch.cat([non_visual, visual_latent], dim=-1)
+        return obs_processed
+    
     def learn(self, num_learning_iterations: int, init_at_random_ep_len: bool = False):  # noqa: C901
         # initialize writer
         if self.log_dir is not None and self.writer is None and not self.disable_logs:
@@ -171,6 +220,14 @@ class OnPolicyRunner:
         obs, extras = self.env.get_observations()
         privileged_obs = extras["observations"].get(self.privileged_obs_type, obs)
         obs, privileged_obs = obs.to(self.device), privileged_obs.to(self.device)
+
+        # --- HERE: process the observations before any rollout ---
+        if obs.shape[-1] >= self.depth_image_flatten:
+            obs = self.process_obs(obs)
+        if privileged_obs.shape[-1] >= self.depth_image_flatten:
+            privileged_obs = self.process_obs(privileged_obs)
+        # --------------------------------------------------------
+
         self.train_mode()  # switch to train mode (for dropout for example)
 
         # Book keeping
@@ -199,15 +256,13 @@ class OnPolicyRunner:
         tot_iter = start_iter + num_learning_iterations
         for it in range(start_iter, tot_iter):
             start = time.time()
-            # Rollout
             with torch.inference_mode():
                 for _ in range(self.num_steps_per_env):
-                    # Sample actions
+                    # --- Again, process obs after every env step ---
                     actions = self.alg.act(obs, privileged_obs)
-                    # Step the environment
                     obs, rewards, dones, infos = self.env.step(actions.to(self.env.device))
-                    # Move to device
                     obs, rewards, dones = (obs.to(self.device), rewards.to(self.device), dones.to(self.device))
+                    
                     # perform normalization
                     obs = self.obs_normalizer(obs)
                     if self.privileged_obs_type is not None:
@@ -216,6 +271,12 @@ class OnPolicyRunner:
                         )
                     else:
                         privileged_obs = obs
+
+                    # --- Process obs after normalization---
+                    obs = self.process_obs(obs)
+                    if privileged_obs.shape[-1] >= self.depth_image_flatten:
+                        privileged_obs = self.process_obs(privileged_obs)
+                    # ----------------------------------------------------------------------
 
                     # process the step
                     self.alg.process_env_step(rewards, dones, infos)
@@ -421,6 +482,9 @@ class OnPolicyRunner:
         # save model
         torch.save(saved_dict, path)
 
+        encoder_path = os.path.join(os.path.dirname(path), "encoder.pt")
+        torch.save(self.visual_encoder.state_dict(), encoder_path)
+        
         # upload model to external logging service
         if self.logger_type in ["neptune", "wandb"] and not self.disable_logs:
             self.writer.save_model(path, self.current_learning_iteration)

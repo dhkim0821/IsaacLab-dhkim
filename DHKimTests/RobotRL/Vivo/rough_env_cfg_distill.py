@@ -115,14 +115,6 @@ class ObservationsCfg(BaseObservationsCfg):
             clip=(0.1, 20.0),  
         )
 
-
-        height_scan = ObsTerm(
-            func=mdp.height_scan,
-            params={"sensor_cfg": SceneEntityCfg("height_scanner")},
-            noise=Unoise(n_min=-0.1, n_max=0.1),
-            clip=(-1.0, 1.0),
-        )
-
         def __post_init__(self):
             super().__post_init__()  # Calls base class logic (optional if you don't override)
             # Add your own custom logic here if needed
@@ -142,8 +134,7 @@ class VivoRoughEnvCfgDistill(LocomotionVelocityRoughEnvCfg):
 
         self.scene.robot = VIVO_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         
-        self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/body"
-        #self.scene.height_scanner = None
+        self.scene.height_scanner = None
         self.scene.tiled_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Camera_OmniVision_OV9782_Color"
         #self.scene.tiled_camera.prim_path = "{ENV_REGEX_NS}/Robot/body/RSD455/Depth_Camera"
 

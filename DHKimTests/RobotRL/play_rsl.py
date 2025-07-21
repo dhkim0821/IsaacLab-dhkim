@@ -60,6 +60,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+
 from isaaclab_tasks.utils import get_checkpoint_path, parse_env_cfg
 from isaaclab_rl.rsl_rl import (
     RslRlOnPolicyRunnerCfg,
@@ -67,6 +68,13 @@ from isaaclab_rl.rsl_rl import (
     export_policy_as_jit,
     export_policy_as_onnx,
 )
+
+from rsl_rl.modules.conv2d import Conv2dHeadModel
+import torch
+
+depth_image_flatten = 3072
+visual_latent_size = 256
+depth_image_size = (1, 48, 64)
 
 
 def main():
@@ -107,6 +115,36 @@ def main():
     # wrap around environment for rsl-rl
     env = RslRlVecEnvWrapper(env)
 
+    # Instantiate visual encoder (same as in training)
+    visual_encoder = Conv2dHeadModel(
+        image_shape=depth_image_size,
+        output_size=visual_latent_size,
+        channels=[64, 64],
+        kernel_sizes=[3, 3],
+        strides=[1, 1],
+        hidden_sizes=[256],
+    ).to(env.unwrapped.device)
+
+    # Load encoder weights
+    encoder_weights_path = os.path.join(log_dir, "encoder.pt")
+    if os.path.exists(encoder_weights_path):
+        visual_encoder.load_state_dict(torch.load(encoder_weights_path, map_location=env.unwrapped.device))
+        print(f"[INFO] Loaded visual encoder weights from {encoder_weights_path}")
+    else:
+        print("[WARNING] Visual encoder weights not found, using random initialization.")
+
+    def process_obs(obs):
+        if obs.shape[-1] < depth_image_flatten:
+            return obs  # Nothing to split
+        non_visual = obs[..., :-depth_image_flatten]
+        visual = obs[..., -depth_image_flatten:]
+        visual = visual.view(-1, *depth_image_size)
+        with torch.no_grad():
+            visual_latent = visual_encoder(visual)
+        obs_processed = torch.cat([non_visual, visual_latent], dim=-1)
+        return obs_processed
+
+
     print(f"[INFO]: Loading model checkpoint from: {resume_path}")
     # load previously trained model
     ppo_runner = OnPolicyRunner(env, agent_cfg.to_dict(), log_dir=None, device=agent_cfg.device)
@@ -116,42 +154,25 @@ def main():
     policy = ppo_runner.get_inference_policy(device=env.unwrapped.device)
 
     # export policy to onnx/jit
-    #export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
-    #export_policy_as_jit(
-    #    ppo_runner.alg.policy, ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.pt"
-    #)
-    #export_policy_as_onnx(
-    #    ppo_runner.alg.policy, normalizer=ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.onnx"
-    #)
+    export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
+    export_policy_as_jit(
+        ppo_runner.alg.policy, ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.pt"
+    )
+    export_policy_as_onnx(
+        ppo_runner.alg.policy, normalizer=ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.onnx"
+    )
 
     # reset environment
     obs, _ = env.get_observations()
+    obs = process_obs(obs)
     timestep = 0
     # simulate environment
     while simulation_app.is_running():
-        # run everything in inference mode
         with torch.inference_mode():
-            # agent stepping
             actions = policy(obs)
-            # env stepping
             obs, _, _, _ = env.step(actions)
-
-            # -- Visualize depth image for env 0, show value range
-            depth_start = 44
-            depth_end = 44 + 3072
-            depth_image_flat = obs[0, depth_start:depth_end].cpu().numpy()
-            depth_image = depth_image_flat.reshape(48, 64)
-
-            # Value range for this frame
-            min_val = np.min(depth_image)
-            max_val = np.max(depth_image)
-            mean_val = np.mean(depth_image)
-
-            plt.imshow(depth_image)  # plasma or 'gray', but plasma shows range better
-            plt.colorbar(label='Depth (meters)')
-            plt.title(f"Depth Img t={timestep}\nmin={min_val:.2f}, max={max_val:.2f}, mean={mean_val:.2f}")
-            plt.pause(0.001)
-            plt.clf()
+            obs = ppo_runner.obs_normalizer(obs)
+            obs = process_obs(obs)
         if args_cli.video:
             timestep += 1
             # Exit the play loop after recording one video
@@ -160,7 +181,6 @@ def main():
 
     # close the simulator
     env.close()
-
 
 if __name__ == "__main__":
     # run the main function
