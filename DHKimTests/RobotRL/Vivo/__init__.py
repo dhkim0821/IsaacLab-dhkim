@@ -16,7 +16,7 @@ gym.register(
 )
 
 gym.register(
-    id="Vivo-RL-v0-Parkour",
+    id="Vivo-RL-v1-Walk",
     entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={

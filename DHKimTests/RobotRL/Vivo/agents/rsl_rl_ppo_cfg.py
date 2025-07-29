@@ -18,13 +18,13 @@ from isaaclab_rl.rsl_rl import (
 
 @configclass
 class Vivo_PPORunnerCfg(RslRlOnPolicyRunnerCfg):
-    num_steps_per_env = 24
-    max_iterations = 20000
-    save_interval = 200
+    num_steps_per_env = 36
+    max_iterations = 200000
+    save_interval = 1000
     experiment_name = "Vivo_test"
     empirical_normalization = False
     policy = RslRlPpoActorCriticCfg(
-        
+        #class_name = "ActorCritic",
         init_noise_std=1.0,
         actor_hidden_dims=[512, 256, 128],
         critic_hidden_dims=[512, 256, 128],
