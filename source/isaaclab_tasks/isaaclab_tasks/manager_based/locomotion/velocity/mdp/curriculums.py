@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 
 def terrain_levels_vel(
-    env: ManagerBasedRLEnv, env_ids: Sequence[int], asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+    env: "ManagerBasedRLEnv", env_ids: Sequence[int], asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
 ) -> torch.Tensor:
     """Curriculum based on the distance the robot walked when commanded to move at a desired velocity.
 
@@ -53,3 +53,62 @@ def terrain_levels_vel(
     terrain.update_env_origins(env_ids, move_up, move_down)
     # return the mean terrain level
     return torch.mean(terrain.terrain_levels.float())
+
+
+def command_range_curriculum(
+    env: "ManagerBasedRLEnv", 
+    env_ids: Sequence[int] = None, 
+
+    #These are example values, aren't actually used
+    command_name: str = "base_velocity", 
+    attribute: str = "ranges.lin_vel_x",
+    range_start: tuple = (-1.0, 1.0), 
+    range_end: tuple = (-3.0, 3.0), 
+    num_steps: int = 5,
+    increment_every: int = 2000,
+    **kwargs
+):
+    """
+    Gradually increases the command range from range_start to range_end over num_steps.
+    Increments after every 'increment_every' learning iterations (calls to this function).
+    Works by directly setting attributes like env.command_manager.cfg.base_velocity.ranges.lin_vel_x.
+    """
+    if not hasattr(env, "_command_range_progress"):
+        env._command_range_progress = {}
+    if attribute not in env._command_range_progress:
+        env._command_range_progress[attribute] = 0
+
+    if not hasattr(env, "_command_range_call_counter"):
+        env._command_range_call_counter = {}
+    if attribute not in env._command_range_call_counter:
+        env._command_range_call_counter[attribute] = 0
+
+    env._command_range_call_counter[attribute] += 1
+    call_count = env._command_range_call_counter[attribute]
+    progress = env._command_range_progress[attribute]
+
+    scaled_increment_every = increment_every * 27
+    if call_count // scaled_increment_every > progress and progress < num_steps:
+        progress += 1
+        env._command_range_progress[attribute] = progress
+
+    new_min = range_start[0] + (range_end[0] - range_start[0]) * progress / num_steps
+    new_max = range_start[1] + (range_end[1] - range_start[1]) * progress / num_steps
+
+    # Set the new range directly using env.command_manager.cfg
+    cmd_cfg = getattr(env.command_manager.cfg, command_name)
+    attr_parts = attribute.split('.')
+
+    # Navigate to the parent of the target attribute
+    obj = cmd_cfg
+    for part in attr_parts[:-1]:
+        obj = getattr(obj, part)
+
+    # Set the new value
+    setattr(obj, attr_parts[-1], (new_min, new_max))
+
+    return {attribute: (new_min, new_max), "progress": progress}
+
+
+#     env.command_manager.cfg.base_velocity.ranges.lin_vel_x=(-3.0, 3.0)
+#     env.command_manager.cfg.base_velocity.ranges.lin_vel_y=(-2.0, 2.0)

@@ -16,7 +16,8 @@ import argparse
 import sys
 
 from isaaclab.app import AppLauncher
-#import Vivo
+#import DHKimTests.RobotRL.Vivo # noqa: F401
+import Vivo
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Train an RL agent with skrl.")
 parser.add_argument("--video", action="store_true", default=False, help="Record videos during training.")

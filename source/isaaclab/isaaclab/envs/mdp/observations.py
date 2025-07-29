@@ -279,6 +279,22 @@ def image(
 
     return images.clone()
 
+def image_flattened(
+    env: ManagerBasedEnv,
+    sensor_cfg: SceneEntityCfg = SceneEntityCfg("tiled_camera"),
+    data_type: str = "depth",   # or "distance_to_image_plane" or "distance_to_camera"
+    convert_perspective_to_orthogonal: bool = False,
+    normalize: bool = True,
+) -> torch.Tensor:
+    imgs = image(
+        env=env,
+        sensor_cfg=sensor_cfg,
+        data_type=data_type,
+        convert_perspective_to_orthogonal=convert_perspective_to_orthogonal,
+        normalize=normalize,
+    )
+    # imgs: (B, H, W, 1)
+    return imgs.reshape(imgs.shape[0], -1).clone()
 
 class image_features(ManagerTermBase):
     """Extracted image features from a pre-trained frozen encoder.

@@ -64,6 +64,13 @@ from isaaclab_rl.rsl_rl import (
     export_policy_as_onnx,
 )
 
+from rsl_rl.modules.conv2d import Conv2dHeadModel
+import torch
+
+depth_image_flatten = 3072
+visual_latent_size = 256
+depth_image_size = (1, 48, 64)
+
 
 def main():
     """Play with RSL-RL agent."""
@@ -103,6 +110,36 @@ def main():
     # wrap around environment for rsl-rl
     env = RslRlVecEnvWrapper(env)
 
+    # Instantiate visual encoder (same as in training)
+    visual_encoder = Conv2dHeadModel(
+        image_shape=depth_image_size,
+        output_size=visual_latent_size,
+        channels=[64, 64],
+        kernel_sizes=[3, 3],
+        strides=[1, 1],
+        hidden_sizes=[256],
+    ).to(env.unwrapped.device)
+
+    # Load encoder weights
+    encoder_weights_path = os.path.join(log_dir, "encoder.pt")
+    if os.path.exists(encoder_weights_path):
+        visual_encoder.load_state_dict(torch.load(encoder_weights_path, map_location=env.unwrapped.device))
+        print(f"[INFO] Loaded visual encoder weights from {encoder_weights_path}")
+    else:
+        print("[WARNING] Visual encoder weights not found, using random initialization.")
+
+    def process_obs(obs):
+        if obs.shape[-1] < depth_image_flatten:
+            return obs  # Nothing to split
+        non_visual = obs[..., :-depth_image_flatten]
+        visual = obs[..., -depth_image_flatten:]
+        visual = visual.view(-1, *depth_image_size)
+        with torch.no_grad():
+            visual_latent = visual_encoder(visual)
+        obs_processed = torch.cat([non_visual, visual_latent], dim=-1)
+        return obs_processed
+
+
     print(f"[INFO]: Loading model checkpoint from: {resume_path}")
     # load previously trained model
     ppo_runner = OnPolicyRunner(env, agent_cfg.to_dict(), log_dir=None, device=agent_cfg.device)
@@ -114,18 +151,18 @@ def main():
     # export policy to onnx/jit
     export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
     export_policy_as_jit(
-        ppo_runner.alg.actor_critic, ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.pt"
+        ppo_runner.alg.policy, ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.pt"
     )
     export_policy_as_onnx(
-        ppo_runner.alg.actor_critic, normalizer=ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.onnx"
+        ppo_runner.alg.policy, normalizer=ppo_runner.obs_normalizer, path=export_model_dir, filename="policy.onnx"
     )
 
     # reset environment
     obs, _ = env.get_observations()
+    obs = process_obs(obs)
     timestep = 0
     # simulate environment
     while simulation_app.is_running():
-        # run everything in inference mode
         with torch.inference_mode():
             # agent stepping
             # obs = torch.tensor([[ 0.,  0.,  0.,  0.,  0., -1.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
@@ -133,8 +170,9 @@ def main():
             #                         0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
             #                         0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  1.]]).to('cuda:0')
             actions = policy(obs)
-            # env stepping
             obs, _, _, _ = env.step(actions)
+            obs = ppo_runner.obs_normalizer(obs)
+            obs = process_obs(obs)
         if args_cli.video:
             timestep += 1
             print(f"[INFO] Timestep: {timestep}")
@@ -144,7 +182,6 @@ def main():
 
     # close the simulator
     env.close()
-
 
 if __name__ == "__main__":
     # run the main function

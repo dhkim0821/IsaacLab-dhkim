@@ -25,6 +25,7 @@ parser.add_argument("--num_envs", type=int, default=None, help="Number of enviro
 parser.add_argument("--task", type=str, default=None, help="Name of the task.")
 parser.add_argument("--seed", type=int, default=None, help="Seed used for the environment")
 parser.add_argument("--max_iterations", type=int, default=None, help="RL Policy training iterations.")
+parser.add_argument("--teacher_checkpoint", type=str, default=None, help="Path to a pretrained PPO teacher checkpoint for distillation.")
 # append RSL-RL cli arguments
 cli_args.add_rsl_rl_args(parser)
 # append AppLauncher cli args
@@ -62,13 +63,15 @@ from isaaclab.utils.dict import print_dict
 from isaaclab.utils.io import dump_pickle, dump_yaml
 
 import isaaclab_tasks  # noqa: F401
-import DHKimTests.RobotRL.MiniArm  # noqa: F401
-import DHKimTests.RobotRL.H1_test # noqa: F401
-import DHKimTests.RobotRL.Prestoe # noqa: F401
-import DHKimTests.RobotRL.BoxLift # noqa: F401
-import DHKimTests.RobotRL.PrestoeBox # noqa: F401
-import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
-import DHKimTests.RobotRL.Vivo # noqa: F401
+#import DHKimTests.RobotRL.MiniArm  # noqa: F401
+#import DHKimTests.RobotRL.H1_test # noqa: F401
+#import DHKimTests.RobotRL.Prestoe # noqa: F401
+#import DHKimTests.RobotRL.BoxLift # noqa: F401
+#import DHKimTests.RobotRL.PrestoeBox # noqa: F401
+#import DHKimTests.RobotRL.PrestoeBiped # noqa: F401
+import Vivo # noqa: F401
+
+import PrestoeClosedLoopArticulation
 
 from isaaclab_tasks.utils import get_checkpoint_path
 from isaaclab_tasks.utils.hydra import hydra_task_config
@@ -91,7 +94,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     )
 
     # set the environment seed
-    # note: certain randomizations occur in the environment initialization so we set the seed here
+    # note: certain randomizations occur in the environment initialization so we s
+    # Set the seed here
     env_cfg.seed = agent_cfg.seed
     env_cfg.sim.device = args_cli.device if args_cli.device is not None else env_cfg.sim.device
 
@@ -101,7 +105,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     print(f"[INFO] Logging experiment in directory: {log_root_path}")
     # specify directory for logging runs: {time-stamp}_{run_name}
     log_dir = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    if agent_cfg.run_name:
+    if agent_cfg.run_name: 
         log_dir += f"_{agent_cfg.run_name}"
     log_dir = os.path.join(log_root_path, log_dir)
 
@@ -130,12 +134,25 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     runner = OnPolicyRunner(env, agent_cfg.to_dict(), log_dir=log_dir, device=agent_cfg.device)
     # write git state to logs
     runner.add_git_repo_to_log(__file__)
-    # save resume path before creating a new log_dir
-    if agent_cfg.resume:
-        # get path to previous checkpoint
+
+    # handle distillation/teacher loading
+    if agent_cfg.algorithm.class_name.lower() == "distillation":
+        # -- Prefer explicit teacher checkpoint
+        if args_cli.teacher_checkpoint is not None:
+            print(f"[INFO]: Loading teacher model checkpoint for distillation from: {args_cli.teacher_checkpoint}")
+            runner.load(args_cli.teacher_checkpoint, load_optimizer=False)
+        # -- Fallback to resume logic if resume is set, but warn user
+        elif agent_cfg.resume:
+            resume_path = get_checkpoint_path(log_root_path, agent_cfg.load_run, agent_cfg.load_checkpoint)
+            print(f"[INFO]: Loading model checkpoint for distillation (resume) from: {resume_path}")
+            runner.load(resume_path)
+        else:
+            print("[ERROR]: Distillation requires a teacher model checkpoint. Use --teacher_checkpoint <path>.")
+            sys.exit(1)
+    elif agent_cfg.resume:
+        # Standard PPO/other RL: resume logic
         resume_path = get_checkpoint_path(log_root_path, agent_cfg.load_run, agent_cfg.load_checkpoint)
         print(f"[INFO]: Loading model checkpoint from: {resume_path}")
-        # load previously trained model
         runner.load(resume_path)
 
     # dump the configuration into log-directory
