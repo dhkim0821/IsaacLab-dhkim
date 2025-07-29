@@ -19,17 +19,20 @@ from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
 # import isaaclab_tasks.manager_based.locomotion.velocity.mdp as mdp
-import DHKimTests.RobotRL.PrestoeBiped.PrestoeBiped_mdp as mdp
+# import DHKimTests.RobotRL.PrestoeBiped.PrestoeBiped_mdp as mdp
+import PrestoeBiped.PrestoeBiped_mdp as mdp
 
 # from isaaclab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
-from DHKimTests.RobotRL.PrestoeBiped.config.rough_terrain import GENTLE_ROUGH_TERRAINS_CFG, ROUGH_TERRAINS_CFG
+# from DHKimTests.RobotRL.PrestoeBiped.config.rough_terrain import GENTLE_ROUGH_TERRAINS_CFG, ROUGH_TERRAINS_CFG
+from PrestoeBiped.config.rough_terrain import GENTLE_ROUGH_TERRAINS_CFG, ROUGH_TERRAINS_CFG
 
 
 
 ##
 # Pre-defined configs
 ##
-from DHKimTests.RobotRL.PrestoeBiped.PrestoeBiped_cfg import PrestoeBiped_MINIMAL_CFG  # isort: skip
+# from DHKimTests.RobotRL.PrestoeBiped.PrestoeBiped_cfg import PrestoeBiped_MINIMAL_CFG  # isort: skip
+from PrestoeBiped.PrestoeBiped_cfg import PrestoeBiped_MINIMAL_CFG  # isort: skip
 
 @configclass
 class MySceneCfg(InteractiveSceneCfg):
