@@ -197,7 +197,7 @@ class VivoRoughEnvCfg_PLAY(VivoRoughEnvCfg):
         super().__post_init__()
 
         # make a smaller scene for play
-        self.scene.num_envs = 50
+        self.scene.num_envs = 200
         self.scene.env_spacing = 2.5
 
         #self.commands.base_velocity.ranges.lin_vel_x = (0.3, 0.3)

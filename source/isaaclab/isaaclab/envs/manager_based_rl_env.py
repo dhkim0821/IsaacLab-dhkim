@@ -88,6 +88,9 @@ class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
         self.metadata["render_fps"] = 1 / self.step_dt
 
         print("[INFO]: Completed setting up the environment...")
+        
+        self._total_effort = 0.0
+        self._init_pos = None
 
     """
     Properties.
@@ -188,6 +191,7 @@ class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
             self.scene.write_data_to_sim()
             # simulate
             self.sim.step(render=False)
+            
             # render between steps only if the GUI or an RTX sensor needs it
             # note: we assume the render interval to be the shortest accepted rendering interval.
             #    If a camera needs rendering at a faster frequency, this will lead to unexpected behavior.
@@ -195,6 +199,10 @@ class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
                 self.sim.render()
             # update buffers at sim dt
             self.scene.update(dt=self.physics_dt)
+            self._total_effort += torch.sum(torch.square(self.scene['robot'].data.applied_torque))
+            distance_traveled = torch.linalg.norm(self.scene['robot'].data.root_pos_w[0, :2] - self._init_pos)
+            tau_squareOverDist = self._total_effort / distance_traveled if torch.any(distance_traveled > 0) else 0
+            print("distance_traveled:", distance_traveled, "tau_squareOverDist:", tau_squareOverDist)
 
         # post-step:
         # -- update env counters (used for curriculum generation)
@@ -391,3 +399,5 @@ class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
 
         # reset the episode length buffer
         self.episode_length_buf[env_ids] = 0
+        
+        self._init_pos = self.scene['robot'].data.root_pos_w[0, :2]
