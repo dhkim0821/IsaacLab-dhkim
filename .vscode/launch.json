@@ -9,11 +9,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "python": "/home/daros/miniconda3/envs/env_isaaclab/bin/python",
             "name": "play_amp",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/scripts/reinforcement_learning/skrl/play.py",
+            "program": "/home/daros/Repositories/IsaacLab-dhkim/scripts/reinforcement_learning/skrl/play.py",
             "console": "integratedTerminal",
             "args": [
                 "--task=Isaac-Humanoid-AMP-Walk-Direct-v0",
@@ -21,11 +21,11 @@
             ]
         },
         {
-            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "python": "/home/daros/miniconda3/envs/env_isaaclab/bin/python",
             "name": "train_amp",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/scripts/reinforcement_learning/skrl/train.py",
+            "program": "/home/daros/Repositories/IsaacLab-dhkim/scripts/reinforcement_learning/skrl/train.py",
             "console": "integratedTerminal",
             "args": [
                 "--task=Isaac-Humanoid-AMP-Walk-Direct-v0",
@@ -35,11 +35,11 @@
             ]
         },
         {
-            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "python": "/home/daros/miniconda3/envs/env_isaaclab/bin/python",
             "name": "play_prestoebiped",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/DHKimTests/RobotRL/play_rsl.py",
+            "program": "/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotRL/play_rsl.py",
             "console": "integratedTerminal",
             "args": [
                 "--task=PrestoeBiped-Flat-RL-Play-v0",
@@ -47,22 +47,22 @@
             ]
         },
         {
-            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "python": "/home/daros/miniconda3/envs/env_isaaclab/bin/python",
             "name": "mujoco_eval",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/DHKimTests/RobotRL/PrestoeBiped/mujoco/eval_mujoco.py",
+            "program": "/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotRL/PrestoeBiped/mujoco/eval_mujoco.py",
             "console": "integratedTerminal",
             "args": [
 
             ]
         },
         {
-            "python": "/home/simon/miniconda3/envs/env_isaaclab/bin/python",
+            "python": "/home/daros/miniconda3/envs/env_isaaclab/bin/python",
             "name": "proto_eval",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/DHKimTests/RobotRL/PrestoeBiped/mujoco/eval_proto.py",
+            "program": "/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotRL/PrestoeBiped/mujoco/eval_proto.py",
             "console": "integratedTerminal",
             "args": [
 

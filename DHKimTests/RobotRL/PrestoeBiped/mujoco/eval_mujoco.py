@@ -8,7 +8,7 @@ import mujoco.viewer
 # get current file path
 file_path = os.path.dirname(os.path.abspath(__file__)) + "/robot/prestoebiped_scene.xml"
 
-model_dir = "/home/simon/Repositories/RL_experiment/IsaacLab-dhkim/DHKimTests/RobotRL/PrestoeBiped/saved_policy/policy.pt"
+model_dir = "/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/RobotRL/PrestoeBiped/saved_policy/policy.pt"
 
 env = MujocoBipedalEnv(model_path=file_path)
 

@@ -13,10 +13,10 @@ def f_fn(u, s):
 def g_fn(u, s, u_max=0.6, u_min=-0.6):
     # g_upper = u - u_max  # u - umax <= 0
     # g_lower = -u + u_min  # -u + umin <= 0
-    g_height = (0.8 - s[:, 1]).unsqueeze(-1)  # height constraint, assuming s[:, 1] is the height
+    # g_height = (0.8 - s[:, 1]).unsqueeze(-1)  # height constraint, assuming s[:, 1] is the height
     g_pitch_upper = (s[:, 2] - 0.2).unsqueeze(-1)
     g_pitch_lower = (-s[:, 2] - 0.2).unsqueeze(-1)
-    return torch.cat([g_height, g_pitch_upper, g_pitch_lower], dim=1)
+    return torch.cat([g_pitch_upper, g_pitch_lower], dim=1)
 
 def h_fn(u, s):
     return (2*s[:,2] + s[:,3] + s[:,4]).unsqueeze(-1)

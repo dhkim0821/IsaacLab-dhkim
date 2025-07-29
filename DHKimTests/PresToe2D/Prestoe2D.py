@@ -30,7 +30,28 @@ Prestoe2D_CFG = ArticulationCfg(
         joint_vel={".*": 0.0},
     ),
     actuators={
-        "r_hip": ImplicitActuatorCfg(
+        "rootx": ImplicitActuatorCfg(
+            joint_names_expr=["rootx"],
+            effort_limit_sim=0.000001,
+            velocity_limit_sim=10,
+            stiffness=0.000001,
+            damping=0.0000001,
+        ),
+       "rooty": ImplicitActuatorCfg(
+            joint_names_expr=["rooty"],
+            effort_limit_sim=0.000001,
+            velocity_limit_sim=10,
+            stiffness=0.000001,
+            damping=0.0000001,
+        ),
+        "rootz": ImplicitActuatorCfg(
+            joint_names_expr=["rootz"],
+            effort_limit_sim=0.000001,
+            velocity_limit_sim=10,
+            stiffness=0.000001,
+            damping=0.0000001,
+        ),
+         "r_hip": ImplicitActuatorCfg(
             joint_names_expr=["r_hip"],
             effort_limit_sim=87.0,
             velocity_limit_sim=2.175,

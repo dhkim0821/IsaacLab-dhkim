@@ -21,8 +21,8 @@ def compute_kkt_loss(u, s, f_fn, lambda_, mu_, g_fn=None, h_fn=None ):
     h_u = h_fn(u, s) if h_fn is not None else torch.zeros_like(mu_)
 
     # Compute gradients of the Lagrangian: ∇_u [f(u) + λᵀg(u) + μᵀh(u)]
-    # L = f_u + (lambda_ * g_u).sum(dim=1) + (mu_ * h_u).sum(dim=1)
-    L = f_u 
+    L = f_u + (lambda_ * g_u).sum(dim=1) + (mu_ * h_u).sum(dim=1)
+    # L = f_u 
     grad = torch.autograd.grad(outputs=L, inputs=u, grad_outputs=torch.ones_like(f_u),
                                create_graph=True, retain_graph=True)[0]
 

@@ -37,12 +37,20 @@ class Prestoe2dEnv(DirectRLEnv):
 
         self.joint_pos = self.robot.data.joint_pos
         self.joint_vel = self.robot.data.joint_vel
+        self.joint_acc = self.robot.data.joint_acc
         # read data
         filename = current_dir + "/walking_2D.npz"
         np_qpos_ref = np.load(filename, allow_pickle=True)["qpos"]
         self.qpos_ref = torch.tensor(np_qpos_ref, dtype=torch.float32, device=self.device)
         self.ref_seq_scale = 4.0 # maybe 2?
-
+        self.save_filename = f"/home/daros/Repositories/IsaacLab-dhkim/DHKimTests/Data_Prestoe2D/save_state"
+        self.time_buf = np.zeros((self.max_episode_length,1), dtype=np.float32)
+        self.jpos_buf = np.zeros((self.max_episode_length,9), dtype=np.float32)
+        self.jvel_buf = np.zeros((self.max_episode_length,9), dtype=np.float32)
+        self.jacc_buf = np.zeros((self.max_episode_length,9), dtype=np.float32)
+        self.jtorque_buf = np.zeros((self.max_episode_length,6), dtype=np.float32)
+        self.file_count = 0
+        
     def _setup_scene(self):
         self.robot = Articulation(self.cfg.robot_cfg)
         # add ground plane
@@ -103,13 +111,48 @@ class Prestoe2dEnv(DirectRLEnv):
             self.joint_torque,
             self.reset_terminated,
         )
+        
+        # only for data collection (play mode)
+        # if self.render_mode == "play":
+        if True:
+        # if False:
+            self._append_data(total_reward, self.joint_pos, self.joint_vel, self.joint_torque)
+            if self.reset_terminated.any() or self.time_out_for_save.any():
+                self._save_file()
         return total_reward
+
+    def _append_data(self, total_reward: torch.Tensor, joint_pos: torch.Tensor, joint_vel: torch.Tensor, joint_torque: torch.Tensor):
+        # Append data to buffers
+        idx = self.episode_length_buf[0].cpu().numpy()
+        self.jpos_buf[idx,:] = joint_pos[0, :].cpu().numpy()  # append joint positions
+        self.jvel_buf[idx,:] = joint_vel[0, :].cpu().numpy()  # append joint velocities
+        self.jtorque_buf[idx,:] = joint_torque[0, :].cpu().numpy()  # append joint torques
+        self.jacc_buf[idx,:] = self.joint_acc[0, :].cpu().numpy()  # append joint accelerations
+        self.time_buf[idx,:] = self.episode_length_buf[0].cpu().numpy()  # increment episode length
+        # np.append(self.reward_buf, total_reward[0].detach().cpu().item())  # append total reward
+        # print(f"Joint positions: {joint_pos[0, :].cpu().numpy()}")
+        # print(f"joint buffer: {self.jpos_buf.shape}")
+   
+    def _save_file(self):
+        file_name = self.save_filename + f"_{self.file_count}.npz"
+        self.file_count += 1
+        print(f"Saving data to {file_name}")
+        # print(f"Time buffer: {self.time_buf}")
+        # print(f"Joint positions buffer: {self.jpos_buf}")
+        np.savez_compressed(file_name, time=self.time_buf, joint_pos=self.jpos_buf, joint_vel=self.jvel_buf, joint_acc=self.jacc_buf,joint_torque=self.jtorque_buf)
+        # clean up buffers
+        # self.time_buf = np.zeros((self.max_episode_length,1), dtype=np.float32)
+        # self.jpos_buf = np.zeros((self.max_episode_length,9), dtype=np.float32)
+        # self.jvel_buf = np.zeros((self.max_episode_length,9), dtype=np.float32)
+        # self.jtorque_buf = np.zeros((self.max_episode_length,6), dtype=np.float32)
 
     def _get_dones(self) -> tuple[torch.Tensor, torch.Tensor]:
         self.joint_pos = self.robot.data.joint_pos
         self.joint_vel = self.robot.data.joint_vel
+        self.joint_acc = self.robot.data.joint_acc
 
         time_out = self.episode_length_buf >= self.max_episode_length - 1
+        self.time_out_for_save = self.episode_length_buf >= self.max_episode_length - 1
 
         # height check
         root_z = self.joint_pos[:, 1]

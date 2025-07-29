@@ -25,8 +25,8 @@ class Prestoe2dEnvCfg(DirectRLEnvCfg):
     decimation = 2
     episode_length_s = 5.0
     # - spaces definition
-    # action: 6 actuated joints + 3 inequality constraint (lambda) + 1 equality constraints (mu)
-    action_space = 6 + 3 + 1
+    # action: 6 actuated joints + 2 inequality constraint (lambda) + 1 equality constraints (mu)
+    action_space = 6 + 2 + 1
     # action_space = 6
     observation_space = 18
     state_space = 0
@@ -39,7 +39,7 @@ class Prestoe2dEnvCfg(DirectRLEnvCfg):
     robot_cfg = Prestoe2D_CFG.replace(prim_path="/World/envs/env_.*/Robot")
 
     # scene
-    scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=500, env_spacing=2.0, replicate_physics=True)
+    scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=300, env_spacing=2.0, replicate_physics=True)
     # scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=30, env_spacing=2.0, replicate_physics=True)
 
     # custom parameters/scales
@@ -54,8 +54,8 @@ class Prestoe2dEnvCfg(DirectRLEnvCfg):
     rew_scale_jvel = -0.05
    
     # only when kkt loss is not used 
-    rew_scale_torque = -0.001
-    rew_scale_hip_symmetry = -0.01
+    rew_scale_torque = -0.0001
+    rew_scale_hip_symmetry = -0.1
     rew_scale_pitch = -0.01
     
     # rew_scale_imitation = -0.5
