@@ -16,7 +16,6 @@ import argparse
 import sys
 
 from isaaclab.app import AppLauncher
-#import DHKimTests.RobotRL.Vivo # noqa: F401
 #import Vivo
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Train an RL agent with skrl.")
@@ -100,7 +99,7 @@ from isaaclab_rl.skrl import SkrlVecEnvWrapper
 
 import isaaclab_tasks  # noqa: F401
 from isaaclab_tasks.utils.hydra import hydra_task_config
-
+import DHKimTests.RobotRL.Vivo # noqa: F401
 # PLACEHOLDER: Extension template (do not remove this comment)
 
 # config shortcuts

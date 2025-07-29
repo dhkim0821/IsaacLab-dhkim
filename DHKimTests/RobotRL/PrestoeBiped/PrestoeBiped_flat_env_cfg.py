@@ -40,7 +40,7 @@ class PrestoeBiped_FlatEnvCfg_PLAY(PrestoeBiped_FlatEnvCfg):
         # remove random pushing
         self.events.base_external_force_torque = None
         self.events.push_robot = None
-        self.commands.base_velocity.ranges.lin_vel_x = (0.5, 1.0)
+        self.commands.base_velocity.ranges.lin_vel_x = (2.0, 2.2)
         self.commands.base_velocity.ranges.lin_vel_y = (-0, 0.)
         self.commands.base_velocity.ranges.ang_vel_z = (-0, 0)
         self.curriculum = None
